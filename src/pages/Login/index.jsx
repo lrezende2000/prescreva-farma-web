@@ -45,7 +45,7 @@ const Login = () => {
             Não tem uma conta?{" "}
             <StyledLink to="/criar-conta">Clique aqui</StyledLink>
           </Text>
-          <Button type="submit">
+          <Button type="submit" fullWidth>
             <Text color="white" fontWeight={700}>
               Entrar
             </Text>

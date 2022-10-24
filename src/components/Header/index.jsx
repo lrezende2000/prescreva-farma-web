@@ -31,7 +31,7 @@ import {
   Person,
   Reply,
 } from "@mui/icons-material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const menuLinks = [
   { link: "/home", label: "Home" },
@@ -46,6 +46,7 @@ const LoggedHeader = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, handleLogout } = useContext(AuthContext);
 
@@ -62,9 +63,11 @@ const LoggedHeader = () => {
   return (
     <LoggedContainer>
       <HeaderWrapper>
-        {/* <Link to="/home"> */}
-        <img src="/assets/logo/white.png" alt="Prescreva Farma logo" />
-        {/* </Link> */}
+        <img
+          src="/assets/logo/white.png"
+          alt="Prescreva Farma logo"
+          onClick={() => navigate("/home")}
+        />
         <UserInfo onClick={handleClick}>
           <IconButton>
             <Avatar>LR</Avatar>

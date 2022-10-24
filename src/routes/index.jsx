@@ -5,6 +5,10 @@ import ForgotPassword from "../pages/ForgotPassword";
 import NewAccount from "../pages/NewAccount";
 import Home from "../pages/Home";
 import PatientList from "../pages/Patient/List";
+import AppointmentList from "../pages/Appointment/List";
+import PrescriptionList from "../pages/Prescription/List";
+import ForwardList from "../pages/Forward/List";
+import MedicineList from "../pages/Medicine/List";
 
 const Router = () => {
   return (
@@ -15,6 +19,10 @@ const Router = () => {
         <Route path="criar-conta" element={<NewAccount />} />
         <Route path="home" element={<Home />} />
         <Route path="pacientes" element={<PatientList />} />
+        <Route path="consultas" element={<AppointmentList />} />
+        <Route path="prescricao" element={<PrescriptionList />} />
+        <Route path="encaminhamentos" element={<ForwardList />} />
+        <Route path="farmacos" element={<MedicineList />} />
       </Routes>
     </BrowserRouter>
   );

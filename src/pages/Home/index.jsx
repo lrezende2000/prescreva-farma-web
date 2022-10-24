@@ -3,7 +3,7 @@ import PageLayout from "../../components/PageLayout";
 import Text from "../../components/Text";
 import Item from "./components/Item";
 
-import { Container, ItemContainer } from "./styles";
+import { ItemContainer } from "./styles";
 
 const Home = () => {
   return (

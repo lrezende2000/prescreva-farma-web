@@ -24,13 +24,13 @@ const ForgotPassword = () => {
             variant="outlined"
           />
           <Link to="/entrar" style={{ width: "100%" }}>
-            <Button variant="outlined">
+            <Button variant="outlined" fullWidth>
               <Text color="primary_blue" fontWeight={700}>
                 Voltar
               </Text>
             </Button>
           </Link>
-          <Button type="submit">
+          <Button type="submit" fullWidth>
             <Text color="white" fontWeight={700}>
               Recuperar senha
             </Text>

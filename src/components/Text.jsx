@@ -15,23 +15,23 @@ const Text = styled.p(
       large: {
         fontSize: 32,
         fontWeight: 700,
-        lineHeight: '38.73px',
+        lineHeight: "38.73px",
       },
       big: {
         fontSize: 24,
-        lineHeight: '30px',
+        lineHeight: "30px",
       },
       medium: {
         fontSize: 20,
-        lineHeight: '24.2px',
+        lineHeight: "24.2px",
       },
       regular: {
         fontSize: 16,
-        lineHeight: '19.36px',
+        lineHeight: "19.36px",
       },
       small: {
         fontSize: 14,
-        lineHeight: '17.5px',
+        lineHeight: "17.5px",
       },
     },
   }),
