@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -17,7 +18,13 @@ import {
   TableHead,
   TextField,
 } from "@mui/material";
-import { Add, CalendarMonth, FilterList, MoreVert, Search } from "@mui/icons-material";
+import {
+  Add,
+  CalendarMonth,
+  FilterList,
+  MoreVert,
+  Search,
+} from "@mui/icons-material";
 
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
@@ -26,6 +33,8 @@ import { StyledTableHead, StyledTableRow } from "./styles";
 
 const AppointmentList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
 
@@ -88,7 +97,9 @@ const AppointmentList = () => {
               <Button startIcon={<FilterList />} variant="outlined">
                 Filtrar
               </Button>
-              <Button startIcon={<Add />}>Agendar consulta</Button>
+              <Button startIcon={<Add />} onClick={() => navigate("novo")}>
+                Agendar consulta
+              </Button>
             </Box>
           </Grid>
         </Grid>
@@ -112,7 +123,9 @@ const AppointmentList = () => {
                   <TableCell component="td">1</TableCell>
                   <TableCell component="td">Lucas Rezende</TableCell>
                   <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell component="td"><Chip label="Pendente" /></TableCell>
+                  <TableCell component="td">
+                    <Chip label="Pendente" />
+                  </TableCell>
                   <TableCell align="right">
                     <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
                       <MoreVert color="primary" />
@@ -123,7 +136,9 @@ const AppointmentList = () => {
                   <TableCell component="td">2</TableCell>
                   <TableCell component="td">Arthur Porto</TableCell>
                   <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell component="td"><Chip label="Pendente" /></TableCell>
+                  <TableCell component="td">
+                    <Chip label="Pendente" />
+                  </TableCell>
                   <TableCell align="right">
                     <IconButton>
                       <MoreVert color="primary" />

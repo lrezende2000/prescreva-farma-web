@@ -61,8 +61,10 @@ const PersonalDetails = () => {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl fullWidth>
-          <InputLabel id="gender_label" htmlFor="gender">Gênero</InputLabel>
+        <FormControl fullWidth size="small">
+          <InputLabel id="gender_label" htmlFor="gender">
+            Gênero
+          </InputLabel>
           <Select
             labelId="gender_label"
             label="Gênero"

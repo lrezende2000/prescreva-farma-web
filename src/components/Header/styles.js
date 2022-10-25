@@ -8,6 +8,10 @@ export const Container = styled.div`
   padding: 1rem 2rem 0;
 
   background-color: ${({ theme }) => theme.colors.primary_blue};
+
+  @media screen and (max-width: 820px) {
+    padding-bottom: 1rem;
+  }
 `;
 
 export const UnloggedContainer = styled.div`
@@ -53,6 +57,20 @@ export const HeaderWrapper = styled.div`
 export const UserInfo = styled.div`
   display: flex;
   align-items: center;
+
+  @media screen and (max-width: 820px) {
+    p {
+      display: none;
+    }
+
+    gap: 1rem;
+  }
+
+  @media screen and (min-width: 821px) {
+    #menu-mobile {
+      display: none;
+    }
+  }
 `;
 
 export const Divider = styled.div`
@@ -62,6 +80,10 @@ export const Divider = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.quartiary_blue};
 
   opacity: 0.5;
+
+  @media screen and (max-width: 820px) {
+    display: none;
+  }
 `;
 
 export const NavLinkContainer = styled.div`
@@ -71,8 +93,12 @@ export const NavLinkContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: flex-end;
-  
+
   gap: 3rem;
+
+  @media screen and (max-width: 820px) {
+    display: none;
+  }
 `;
 
 export const NavItem = styled.div`

@@ -1,13 +1,25 @@
 import { useContext, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Avatar,
-  Button,
+  Box,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
 } from "@mui/material";
+import {
+  Assignment,
+  CalendarMonth,
+  FolderShared,
+  Logout,
+  Medication,
+  Person,
+  Reply,
+  Menu as MenuIcon,
+} from "@mui/icons-material";
 
+import { theme } from "../../global/theme";
 import { AuthContext } from "../../context/auth";
 
 import Text from "../Text";
@@ -22,16 +34,6 @@ import {
   UserInfo,
   NavItem,
 } from "./styles";
-import {
-  Assignment,
-  CalendarMonth,
-  FolderShared,
-  Logout,
-  Medication,
-  Person,
-  Reply,
-} from "@mui/icons-material";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const menuLinks = [
   { link: "/home", label: "Home" },
@@ -43,22 +45,25 @@ export const menuLinks = [
 ];
 
 const LoggedHeader = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [accountAnchor, setAccountAnchor] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   const location = useLocation();
+
   const navigate = useNavigate();
 
   const { user, handleLogout } = useContext(AuthContext);
 
-  const open = Boolean(anchorEl);
+  const openAccount = Boolean(accountAnchor);
+  const openMenu = Boolean(menuAnchor);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleClick = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  // };
 
   return (
     <LoggedContainer>
@@ -68,15 +73,26 @@ const LoggedHeader = () => {
           alt="Prescreva Farma logo"
           onClick={() => navigate("/home")}
         />
-        <UserInfo onClick={handleClick}>
-          <IconButton>
-            <Avatar>LR</Avatar>
-          </IconButton>
-          <Button variant="text" sx={{ padding: 0 }}>
+        <UserInfo>
+          <Box
+            display="flex"
+            alignItems="center"
+            onClick={(e) => setAccountAnchor(e.currentTarget)}
+            sx={{ cursor: "pointer" }}
+          >
+            <IconButton>
+              <Avatar>LR</Avatar>
+            </IconButton>
             <Text color="white" variant="small" fontWeight={700}>
               Lucas Rezende
             </Text>
-          </Button>
+          </Box>
+          <IconButton
+            id="menu-mobile"
+            onClick={(e) => setMenuAnchor(e.currentTarget)}
+          >
+            <MenuIcon sx={{ color: "white" }} />
+          </IconButton>
         </UserInfo>
       </HeaderWrapper>
       <Divider />
@@ -92,10 +108,10 @@ const LoggedHeader = () => {
         ))}
       </NavLinkContainer>
       <Menu
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        onClick={handleClose}
+        open={openAccount}
+        anchorEl={accountAnchor}
+        onClose={() => setAccountAnchor(null)}
+        onClick={() => setAccountAnchor(null)}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -138,6 +154,54 @@ const LoggedHeader = () => {
           </ListItemIcon>
           Logout
         </MenuItem>
+      </Menu>
+      <Menu
+        open={openMenu}
+        anchorEl={menuAnchor}
+        onClose={() => setMenuAnchor(null)}
+        onClick={() => setMenuAnchor(null)}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1,
+            "& .MuiAvatar-root": {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 15,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        {menuLinks.map((menuLink) => (
+          <Link to={menuLink.link} key={menuLink.link}>
+            <MenuItem
+              sx={{
+                background: location.pathname.includes(menuLink.link)
+                  ? theme.colors.quartiary_blue
+                  : "",
+              }}
+            >
+              {menuLink.label}
+            </MenuItem>
+          </Link>
+        ))}
       </Menu>
     </LoggedContainer>
   );

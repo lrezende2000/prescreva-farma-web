@@ -9,6 +9,8 @@ import AppointmentList from "../pages/Appointment/List";
 import PrescriptionList from "../pages/Prescription/List";
 import ForwardList from "../pages/Forward/List";
 import MedicineList from "../pages/Medicine/List";
+import CreatePatient from "../pages/Patient/Create";
+import CreateAppointment from "../pages/Appointment/Create";
 
 const Router = () => {
   return (
@@ -19,7 +21,9 @@ const Router = () => {
         <Route path="criar-conta" element={<NewAccount />} />
         <Route path="home" element={<Home />} />
         <Route path="pacientes" element={<PatientList />} />
+        <Route path="pacientes/novo" element={<CreatePatient />} />
         <Route path="consultas" element={<AppointmentList />} />
+        <Route path="consultas/novo" element={<CreateAppointment />} />
         <Route path="prescricao" element={<PrescriptionList />} />
         <Route path="encaminhamentos" element={<ForwardList />} />
         <Route path="farmacos" element={<MedicineList />} />

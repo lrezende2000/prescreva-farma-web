@@ -26,10 +26,10 @@ const MedicineList = () => {
         Fármacos
       </Text>
 
-      <Grid container>
+      <Grid container spacing={2}>
         {/* Filter fields */}
         <Grid item container xs={12} md={10} spacing={2}>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               placeholder="Buscar por nome"
               InputProps={{
@@ -41,7 +41,7 @@ const MedicineList = () => {
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               placeholder="Buscar por subgrupo"
               InputProps={{
@@ -53,7 +53,7 @@ const MedicineList = () => {
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               placeholder="Buscar por forma farmacêutica"
               InputProps={{
@@ -65,7 +65,7 @@ const MedicineList = () => {
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               placeholder="Buscar pelo Indicação"
               InputProps={{

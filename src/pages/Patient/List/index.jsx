@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -28,6 +29,8 @@ import { StyledTableHead, StyledTableRow } from "./styles";
 const PatientList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const navigate = useNavigate();
+
   const open = Boolean(anchorEl);
 
   return (
@@ -36,9 +39,9 @@ const PatientList = () => {
         Pacientes
       </Text>
 
-      <Grid container>
+      <Grid container spacing={2}>
         {/* Filter fields */}
-        <Grid item container xs={12} md={8} spacing={2}>
+        <Grid item container xs={12} lg={8} spacing={2}>
           <Grid item xs={12} md={4}>
             <TextField
               placeholder="Buscar por nome"
@@ -77,18 +80,21 @@ const PatientList = () => {
           </Grid>
         </Grid>
         {/* Action buttons */}
-        <Grid item container xs={12} md={4}>
+        <Grid item container xs={12} lg={4}>
           <Grid item xs={12}>
             <Box
               display="flex"
-              alignItems="center"
+              flexDirection={["column", "row"]}
+              alignItems={["unset", "center"]}
               justifyContent="flex-end"
               gap={1}
             >
               <Button startIcon={<FilterList />} variant="outlined">
                 Filtrar
               </Button>
-              <Button startIcon={<Add />}>Cadastrar paciente</Button>
+              <Button startIcon={<Add />} onClick={() => navigate("novo")}>
+                Cadastrar paciente
+              </Button>
             </Box>
           </Grid>
         </Grid>

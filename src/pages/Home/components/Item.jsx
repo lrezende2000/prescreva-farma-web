@@ -12,16 +12,23 @@ const Container = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.secondary_blue};
   border-radius: 8px;
 
-  padding: 1rem;
-  max-width: 250px;
   width: 100%;
+  max-width: 250px;
+  padding: 1rem;
 
   transition: 0.1s ease-in;
+
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.1);
 
   cursor: pointer;
 
   :hover {
     background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  @media screen and (max-width: 820px) {
+    max-width: unset;
+    width: unset;
   }
 `;
 
@@ -31,7 +38,9 @@ const Item = ({ Icon, label, link }) => {
   return (
     <Container onClick={() => navigate(link)}>
       <Icon fontSize="large" sx={{ color: theme.colors.secondary_blue }} />
-      <Text variant="medium" fontWeight={700}>{label}</Text>
+      <Text variant="medium" fontWeight={700}>
+        {label}
+      </Text>
     </Container>
   );
 };
