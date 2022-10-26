@@ -51,5 +51,17 @@ export const MUITheme = createTheme({
         size: "small",
       },
     },
+    MuiGrid: {
+      defaultProps: {
+        spacing: 2,
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          whiteSpace: "normal",
+        },
+      },
+    },
   },
 });

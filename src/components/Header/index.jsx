@@ -57,17 +57,31 @@ const LoggedHeader = () => {
   const openAccount = Boolean(accountAnchor);
   const openMenu = Boolean(menuAnchor);
 
-  // const handleClick = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const getNameInitials = () => {
+    const nameSplited = user.name.split(" ");
 
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
+    if (nameSplited.length && user.name) {
+      if (nameSplited.length > 1) {
+        return `${nameSplited[0][0]}${
+          nameSplited[nameSplited.length - 1][0]
+        }`.toUpperCase();
+      }
+
+      return nameSplited[0][0].toUpperCase();
+    }
+
+    return "US";
+  };
 
   return (
     <LoggedContainer>
       <HeaderWrapper>
+        <IconButton
+          id="menu-mobile"
+          onClick={(e) => setMenuAnchor(e.currentTarget)}
+        >
+          <MenuIcon sx={{ color: "white" }} />
+        </IconButton>
         <img
           src="/assets/logo/white.png"
           alt="Prescreva Farma logo"
@@ -81,18 +95,12 @@ const LoggedHeader = () => {
             sx={{ cursor: "pointer" }}
           >
             <IconButton>
-              <Avatar>LR</Avatar>
+              <Avatar>{getNameInitials("")}</Avatar>
             </IconButton>
             <Text color="white" variant="small" fontWeight={700}>
-              Lucas Rezende
+              {user.name}
             </Text>
           </Box>
-          <IconButton
-            id="menu-mobile"
-            onClick={(e) => setMenuAnchor(e.currentTarget)}
-          >
-            <MenuIcon sx={{ color: "white" }} />
-          </IconButton>
         </UserInfo>
       </HeaderWrapper>
       <Divider />
@@ -129,7 +137,7 @@ const LoggedHeader = () => {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 15,
+              right: 22,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -177,7 +185,7 @@ const LoggedHeader = () => {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 15,
+              left: 15,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -218,5 +226,5 @@ const UnloggedHeader = () => {
 export const Header = () => {
   const { user } = useContext(AuthContext);
 
-  return <Container>{!user ? <LoggedHeader /> : <UnloggedHeader />}</Container>;
+  return <Container>{user ? <LoggedHeader /> : <UnloggedHeader />}</Container>;
 };

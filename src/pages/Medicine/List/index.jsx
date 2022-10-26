@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -14,12 +15,60 @@ import {
 } from "@mui/material";
 import { FilterList, Search } from "@mui/icons-material";
 
+import useAxios from "../../../hooks/useAxios";
+
+import { formatUrlQuery } from "../../../helpers/formatter";
+
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
 
 const MedicineList = () => {
+  const [rows, setRows] = useState([]);
+  const [totalRows, setTotalRows] = useState(0);
+  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState({
+    name: "",
+    subGroup: "",
+    pharmaceuticalForm: "",
+    therapeuticIndication: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const pageCount = useMemo(() => Math.ceil(totalRows / 15), [totalRows]);
+
+  const handleChangeFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const api = useAxios();
+
+  const fetchRows = useCallback(async () => {
+    try {
+      setLoading(true);
+      const url = formatUrlQuery("/medicines/list", { ...filters, page });
+
+      const { data } = await api.get(url);
+
+      setRows(data.rows);
+      setTotalRows(data.totalRows);
+    } catch (err) {
+      setRows([]);
+      setTotalRows(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, filters]);
+
+  useEffect(() => {
+    fetchRows();
+  }, [page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [totalRows]);
+
   return (
     <PageLayout>
       <Text color="primary_blue" variant="large">
@@ -31,6 +80,9 @@ const MedicineList = () => {
         <Grid item container xs={12} md={10} spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
+              label="Nome"
+              value={filters.name}
+              onChange={(e) => handleChangeFilter("name", e.target.value)}
               placeholder="Buscar por nome"
               InputProps={{
                 startAdornment: (
@@ -39,10 +91,18 @@ const MedicineList = () => {
                   </InputAdornment>
                 ),
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchRows();
+                }
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
+              label="Subgrupo"
+              value={filters.subGroup}
+              onChange={(e) => handleChangeFilter("subGroup", e.target.value)}
               placeholder="Buscar por subgrupo"
               InputProps={{
                 startAdornment: (
@@ -51,10 +111,20 @@ const MedicineList = () => {
                   </InputAdornment>
                 ),
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchRows();
+                }
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
+              label="Forma farmacêutica"
+              value={filters.pharmaceuticalForm}
+              onChange={(e) =>
+                handleChangeFilter("pharmaceuticalForm", e.target.value)
+              }
               placeholder="Buscar por forma farmacêutica"
               InputProps={{
                 startAdornment: (
@@ -63,10 +133,20 @@ const MedicineList = () => {
                   </InputAdornment>
                 ),
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchRows();
+                }
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
+              label="Indicação"
+              value={filters.therapeuticIndication}
+              onChange={(e) =>
+                handleChangeFilter("therapeuticIndication", e.target.value)
+              }
               placeholder="Buscar pelo Indicação"
               InputProps={{
                 startAdornment: (
@@ -74,6 +154,11 @@ const MedicineList = () => {
                     <Search color="primary" />
                   </InputAdornment>
                 ),
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchRows();
+                }
               }}
             />
           </Grid>
@@ -87,7 +172,12 @@ const MedicineList = () => {
               justifyContent="flex-end"
               gap={1}
             >
-              <Button startIcon={<FilterList />} variant="outlined">
+              <Button
+                disabled={loading}
+                startIcon={<FilterList />}
+                variant="outlined"
+                onClick={() => fetchRows()}
+              >
                 Filtrar
               </Button>
             </Box>
@@ -109,24 +199,31 @@ const MedicineList = () => {
                 </StyledTableHead>
               </TableHead>
               <TableBody>
-                <StyledTableRow>
-                  <TableCell component="td">Aceclofenaco</TableCell>
-                  <TableCell component="td">
-                    M02A - Produtos para dor articular e muscular de uso local
-                  </TableCell>
-                  <TableCell component="td">Creme dermatológico</TableCell>
-                  <TableCell component="td">15 mg/g</TableCell>
-                  <TableCell component="td">
-                    Dor e inflamação do sistema musculoesquelético.
-                  </TableCell>
-                </StyledTableRow>
+                {rows.map((row) => (
+                  <StyledTableRow key={row.id}>
+                    <TableCell component="td">{row.name}</TableCell>
+                    <TableCell component="td">{row.subGroup}</TableCell>
+                    <TableCell component="td">
+                      {row.pharmaceuticalForm}
+                    </TableCell>
+                    <TableCell component="td">{row.maximumDosage}</TableCell>
+                    <TableCell component="td">
+                      {row.therapeuticIndication}
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
         </Grid>
       </Grid>
       <Box display="flex" justifyContent="center">
-        <Pagination count={10} color="secondary" />
+        <Pagination
+          page={page}
+          count={pageCount}
+          color="secondary"
+          onChange={(_, value) => setPage(value)}
+        />
       </Box>
     </PageLayout>
   );

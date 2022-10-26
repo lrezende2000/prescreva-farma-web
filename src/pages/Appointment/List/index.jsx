@@ -90,7 +90,8 @@ const AppointmentList = () => {
           <Grid item xs={12}>
             <Box
               display="flex"
-              alignItems="center"
+              flexDirection={["column", "row"]}
+              alignItems={["unset", "center"]}
               justifyContent="flex-end"
               gap={1}
             >

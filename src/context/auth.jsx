@@ -1,22 +1,31 @@
 import { createContext, useState } from "react";
+import { api } from "../services/api";
 
 export const AuthContext = createContext({
   user: undefined,
-  handleLogin: () => {},
+  updateUser: () => {},
   handleLogout: () => {},
-  restoreSession: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
 
+  const updateUser = (u) => {
+    setUser((prevState) => ({ ...prevState, ...u }));
+  };
+
+  const handleLogout = async () => {
+    await api.post("/logout", {}, { withCredentials: true });
+    setUser(undefined);
+    window.location.href = "/entrar";
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        handleLogin: () => {},
-        handleLogout: () => {},
-        restoreSession: () => {},
+        updateUser,
+        handleLogout,
       }}
     >
       {children}

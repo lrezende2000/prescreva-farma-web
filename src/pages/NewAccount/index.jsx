@@ -60,7 +60,12 @@ const NewAccount = () => {
       numberFields: ["phone", "tel", "cep", "cpf"],
     });
 
-    await api.post("/signup", body);
+    try {
+      console.log(body);
+      await api.post("/signup", body);
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

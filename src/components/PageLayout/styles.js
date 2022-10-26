@@ -17,4 +17,8 @@ export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  @media screen and (max-width: 400px) {
+    padding: 2rem 1rem 1rem;
+  }
 `;

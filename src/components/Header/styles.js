@@ -12,6 +12,10 @@ export const Container = styled.div`
   @media screen and (max-width: 820px) {
     padding-bottom: 1rem;
   }
+
+  @media screen and (max-width: 400px) {
+    padding: 1rem;
+  }
 `;
 
 export const UnloggedContainer = styled.div`
@@ -21,8 +25,10 @@ export const UnloggedContainer = styled.div`
   align-items: center;
   justify-content: flex-start;
 
+  padding-bottom: 1rem;
+
   img {
-    height: 100%;
+    height: 60px;
   }
 `;
 
@@ -52,6 +58,12 @@ export const HeaderWrapper = styled.div`
   img {
     height: 60px;
   }
+
+  @media screen and (min-width: 821px) {
+    #menu-mobile {
+      display: none;
+    }
+  }
 `;
 
 export const UserInfo = styled.div`
@@ -64,12 +76,6 @@ export const UserInfo = styled.div`
     }
 
     gap: 1rem;
-  }
-
-  @media screen and (min-width: 821px) {
-    #menu-mobile {
-      display: none;
-    }
   }
 `;
 

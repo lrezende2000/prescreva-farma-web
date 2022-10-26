@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -31,6 +32,8 @@ import { StyledTableHead, StyledTableRow } from "./styles";
 
 const ForwardList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
 
@@ -74,14 +77,17 @@ const ForwardList = () => {
           <Grid item xs={12}>
             <Box
               display="flex"
-              alignItems="center"
+              flexDirection={["column", "row"]}
+              alignItems={["unset", "center"]}
               justifyContent="flex-end"
               gap={1}
             >
               <Button startIcon={<FilterList />} variant="outlined">
                 Filtrar
               </Button>
-              <Button startIcon={<Add />}>Encaminhar</Button>
+              <Button startIcon={<Add />} onClick={() => navigate("novo")}>
+                Encaminhar
+              </Button>
             </Box>
           </Grid>
         </Grid>
