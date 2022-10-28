@@ -1,5 +1,6 @@
 import { ThemeProvider as SCThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
+import { ToastContainer } from "react-toastify";
 
 import { MUITheme, theme } from "./global/theme";
 
@@ -15,6 +16,7 @@ function App() {
         <AuthProvider>
           <Routes />
         </AuthProvider>
+        <ToastContainer />
       </SCThemeProvider>
     </MUIThemeProvider>
   );

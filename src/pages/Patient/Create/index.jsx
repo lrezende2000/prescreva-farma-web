@@ -35,7 +35,7 @@ const CreatePatient = () => {
         />
         <Grid container spacing={2}>
           <Formik initialValues={initialValues}>
-            {({}) => (
+            {() => (
               <>
                 <Grid item xs={12} md={6}>
                   <TextField label="Nome completo" />

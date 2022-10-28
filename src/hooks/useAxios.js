@@ -1,8 +1,9 @@
-import React from 'react';
+import React from "react";
+import { toast } from "react-toastify";
 
-import { api } from '../services/api';
-import useAuth from './useAuth';
-import useRefreshToken from './useRefreshToken';
+import { api } from "../services/api";
+import useAuth from "./useAuth";
+import useRefreshToken from "./useRefreshToken";
 
 const useAxios = () => {
   const refreshToken = useRefreshToken();
@@ -19,9 +20,19 @@ const useAxios = () => {
     });
 
     const responseInterceptor = api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        if (response.data?.message) {
+          toast.success(response.data?.message);
+        }
+
+        return response;
+      },
       async (err) => {
         const prevRequest = err?.config;
+
+        if (err?.response?.status === 400 && err?.response?.data?.message) {
+          toast.error(err.response.data.message);
+        }
 
         if (err?.response?.status === 401 && !prevRequest?.sent) {
           prevRequest.sent = true;
@@ -35,7 +46,7 @@ const useAxios = () => {
         }
 
         return Promise.reject(err);
-      },
+      }
     );
 
     return () => {

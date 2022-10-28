@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { Button } from "@mui/material";
 import {
@@ -8,7 +9,7 @@ import {
   ArrowRightAlt,
 } from "@mui/icons-material";
 
-import { api } from "../../services/api";
+import useAxios from "../../hooks/useAxios";
 import { formartBody } from "../../helpers/formatter";
 
 import PageLayout from "../../components/PageLayout";
@@ -41,6 +42,11 @@ const steps = [
 
 const NewAccount = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const api = useAxios();
 
   const isFirstStep = activeStep === 0;
   const isLastStep = activeStep === steps.length - 1;
@@ -61,10 +67,15 @@ const NewAccount = () => {
     });
 
     try {
+      setLoading(true);
       console.log(body);
       await api.post("/signup", body);
+
+      navigate("/entrar");
     } catch (err) {
       console.log(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,9 +120,16 @@ const NewAccount = () => {
                         Voltar
                       </Button>
                     ) : (
-                      <div />
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        onClick={() => navigate("/entrar")}
+                      >
+                        Cancelar
+                      </Button>
                     )}
                     <Button
+                      disabled={loading}
                       endIcon={!isLastStep && <ArrowRightAlt />}
                       onClick={isLastStep ? handleSubmit : handleNextStep}
                     >
