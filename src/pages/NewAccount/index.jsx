@@ -10,7 +10,7 @@ import {
 } from "@mui/icons-material";
 
 import useAxios from "../../hooks/useAxios";
-import { formartBody } from "../../helpers/formatter";
+import { formatBody } from "../../helpers/formatter";
 
 import PageLayout from "../../components/PageLayout";
 import Stepper from "../../components/Stepper";
@@ -62,7 +62,7 @@ const NewAccount = () => {
   };
 
   const handleSubmit = async (values) => {
-    const body = formartBody(values, {
+    const body = formatBody(values, {
       numberFields: ["phone", "tel", "cep", "cpf"],
     });
 

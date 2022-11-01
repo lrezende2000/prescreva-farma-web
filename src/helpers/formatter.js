@@ -1,6 +1,6 @@
 import { unmaskNumber } from "./mask";
 
-export const formartBody = (body, rules) => {
+export const formatBody = (body, rules) => {
   let formattedBody = { ...body };
 
   if (rules.numberFields) {

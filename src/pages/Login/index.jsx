@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { Button, TextField } from "@mui/material";
+import * as yup from "yup";
 
 import useAuth from "../../hooks/useAuth";
 import useAxios from "../../hooks/useAxios";
@@ -27,12 +28,18 @@ const Login = () => {
 
   const api = useAxios();
 
+  const validationSchema = yup.object().shape({
+    login: yup
+      .string()
+      .required("Email é obrigatório")
+      .email("Email no formato errado"),
+    password: yup.string().required("Senha é obrigatória"),
+  });
+
   const handleToggleSubmit = async (values) => {
     try {
       setLoading(true);
-      const { data } = await api.post("/login", values, {
-        withCredentials: true,
-      });
+      const { data } = await api.post("/login", values);
 
       updateUser(data.user);
 
@@ -49,6 +56,7 @@ const Login = () => {
         <Formik
           initialValues={{ login: "", password: "" }}
           onSubmit={handleToggleSubmit}
+          validationSchema={validationSchema}
         >
           {({ values, setFieldValue, handleSubmit, errors }) => (
             <LoginForm>
@@ -57,9 +65,6 @@ const Login = () => {
               </Text>
               <Text variant="medium" fontWeight={700}>
                 Entrar
-              </Text>
-              <Text variant="medium" fontWeight={100} textAlign="center">
-                Loren ipsun loren ipsun loren ipsun loren ipsunloren ipsun
               </Text>
               <TextField
                 fullWidth
@@ -87,11 +92,11 @@ const Login = () => {
               <Text fontWeight={700}>
                 <StyledLink to="/esqueci-senha">Esqueci minha senha</StyledLink>
               </Text>
-              <Text>
+              {/* <Text>
                 Não tem uma conta?{" "}
                 <StyledLink to="/criar-conta">Clique aqui</StyledLink>
-              </Text>
-              <Button fullWidth disabled={loading} onClick={handleSubmit}>
+              </Text> */}
+              <Button fullWidth disabled={loading} type="submit" onClick={handleSubmit}>
                 <Text color="white" fontWeight={700}>
                   Entrar
                 </Text>
