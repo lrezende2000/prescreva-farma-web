@@ -84,7 +84,7 @@ const CreatePatient = () => {
         formatBody(values, { numberFields: ["tel", "phone", "cpf"] })
       );
 
-      navigate("/patient");
+      navigate("/pacientes");
     } catch {}
   };
 

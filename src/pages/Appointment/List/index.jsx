@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  Chip,
   Grid,
   IconButton,
   InputAdornment,
@@ -18,25 +17,63 @@ import {
   TableHead,
   TextField,
 } from "@mui/material";
-import {
-  Add,
-  CalendarMonth,
-  FilterList,
-  MoreVert,
-  Search,
-} from "@mui/icons-material";
+import { Add, CalendarMonth, FilterList, MoreVert } from "@mui/icons-material";
 
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
+import { formatUrlQuery } from "../../../helpers/formatter";
+import useAxios from "../../../hooks/useAxios";
+import PatientAutocomplete from "../../../components/PatientAutocomplete";
 
 const AppointmentList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [filters, setFilters] = useState({
+    patientId: undefined,
+    date: "",
+  });
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [page, setPage] = useState(1);
 
   const navigate = useNavigate();
 
+  const api = useAxios();
+
   const open = Boolean(anchorEl);
+
+  const pageCount = useMemo(() => Math.ceil(totalRows / 15), [totalRows]);
+
+  const handleChangeFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const fetchRows = useCallback(async () => {
+    try {
+      setLoading(true);
+      const url = formatUrlQuery("/appointment/list", { ...filters, page });
+
+      const { data } = await api.get(url);
+
+      setRows(data.rows);
+      setTotalRows(data.totalRows);
+    } catch (err) {
+      setRows([]);
+      setTotalRows(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, filters]);
+
+  useEffect(() => {
+    fetchRows();
+  }, [page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [totalRows]);
 
   return (
     <PageLayout>
@@ -48,15 +85,10 @@ const AppointmentList = () => {
         {/* Filter fields */}
         <Grid item container xs={12} md={8} spacing={2}>
           <Grid item xs={12} md={4}>
-            <TextField
-              placeholder="Buscar por paciente"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="primary" />
-                  </InputAdornment>
-                ),
-              }}
+            <PatientAutocomplete
+              onChange={(patient) =>
+                handleChangeFilter("patientId", patient?.id || undefined)
+              }
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -67,18 +99,6 @@ const AppointmentList = () => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <CalendarMonth color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              placeholder="Buscar pelo status"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="primary" />
                   </InputAdornment>
                 ),
               }}
@@ -115,37 +135,22 @@ const AppointmentList = () => {
                   <TableCell>ID</TableCell>
                   <TableCell>Paciente</TableCell>
                   <TableCell>Data da consulta</TableCell>
-                  <TableCell>Status</TableCell>
                   <TableCell align="right">Ações</TableCell>
                 </StyledTableHead>
               </TableHead>
               <TableBody>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell component="td">
-                    <Chip label="Pendente" />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell component="td">
-                    <Chip label="Pendente" />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
+                {rows.map((row) => (
+                  <StyledTableRow key={row.id}>
+                    <TableCell component="td">{row.id}</TableCell>
+                    <TableCell component="td">{row.patient.name}</TableCell>
+                    <TableCell component="td">{row.date}</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                        <MoreVert color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -161,13 +166,15 @@ const AppointmentList = () => {
           <MenuItem>
             <Text>Editar</Text>
           </MenuItem>
-          <MenuItem>
-            <Text>Atualizar status</Text>
-          </MenuItem>
         </Menu>
       </Grid>
       <Box display="flex" justifyContent="center">
-        <Pagination count={10} color="secondary" />
+        <Pagination
+          page={page}
+          count={pageCount}
+          color="secondary"
+          onChange={(_, value) => setPage(value)}
+        />
       </Box>
     </PageLayout>
   );

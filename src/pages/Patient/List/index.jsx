@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 import {
   Box,
   Button,
@@ -20,6 +21,8 @@ import {
 import { Add, FilterList, MoreVert, Search } from "@mui/icons-material";
 
 import { maskCpf } from "../../../helpers/mask";
+import { formatUrlQuery } from "../../../helpers/formatter";
+import useAxios from "../../../hooks/useAxios";
 
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
@@ -28,10 +31,51 @@ import { StyledTableHead, StyledTableRow } from "./styles";
 
 const PatientList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    name: "",
+    cpf: "",
+  });
+  const [rows, setRows] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalRows, setTotalRows] = useState(0);
 
   const navigate = useNavigate();
 
+  const api = useAxios();
+
   const open = Boolean(anchorEl);
+
+  const pageCount = useMemo(() => Math.ceil(totalRows / 15), [totalRows]);
+
+  const handleChangeFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const fetchRows = useCallback(async () => {
+    try {
+      setLoading(true);
+      const url = formatUrlQuery("/patient/list", { ...filters, page });
+
+      const { data } = await api.get(url);
+
+      setRows(data.rows);
+      setTotalRows(data.totalRows);
+    } catch (err) {
+      setRows([]);
+      setTotalRows(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, filters]);
+
+  useEffect(() => {
+    fetchRows();
+  }, [page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [totalRows]);
 
   return (
     <PageLayout>
@@ -44,6 +88,8 @@ const PatientList = () => {
         <Grid item container xs={12} lg={8} spacing={2}>
           <Grid item xs={12} md={4}>
             <TextField
+              value={filters.name}
+              onChange={(e) => handleChangeFilter("name", e.target.value)}
               placeholder="Buscar por nome"
               InputProps={{
                 startAdornment: (
@@ -52,11 +98,18 @@ const PatientList = () => {
                   </InputAdornment>
                 ),
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchRows();
+                }
+              }}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
               placeholder="Buscar por CPF"
+              value={filters.cpf}
+              onChange={(e) => handleChangeFilter("cpf", e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -64,17 +117,10 @@ const PatientList = () => {
                   </InputAdornment>
                 ),
               }}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              placeholder="Buscar pelo celular"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="primary" />
-                  </InputAdornment>
-                ),
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchRows();
+                }
               }}
             />
           </Grid>
@@ -89,7 +135,12 @@ const PatientList = () => {
               justifyContent="flex-end"
               gap={1}
             >
-              <Button startIcon={<FilterList />} variant="outlined">
+              <Button
+                startIcon={<FilterList />}
+                variant="outlined"
+                disabled={loading}
+                onClick={fetchRows}
+              >
                 Filtrar
               </Button>
               <Button startIcon={<Add />} onClick={() => navigate("novo")}>
@@ -110,179 +161,29 @@ const PatientList = () => {
                   <TableCell>Nome</TableCell>
                   <TableCell>CPF</TableCell>
                   <TableCell>Idade</TableCell>
-                  <TableCell>Próxima consulta</TableCell>
+                  <TableCell align="center">Próxima consulta</TableCell>
                   <TableCell align="right">Ações</TableCell>
                 </StyledTableHead>
               </TableHead>
               <TableBody>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">{maskCpf("12334578900")}</TableCell>
-                  <TableCell component="td">22</TableCell>
-                  <TableCell component="td">24/10/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">{maskCpf("12345678900")}</TableCell>
-                  <TableCell component="td">27</TableCell>
-                  <TableCell component="td">23/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
+                {rows.map((row) => (
+                  <StyledTableRow key={row.id}>
+                    <TableCell component="td">{row.id}</TableCell>
+                    <TableCell component="td">{row.name}</TableCell>
+                    <TableCell component="td">{maskCpf(row.cpf)}</TableCell>
+                    <TableCell component="td">
+                      {moment().diff(moment(row.birthDate), "years")}
+                    </TableCell>
+                    <TableCell component="td" align="center">
+                      -
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                        <MoreVert color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -310,7 +211,12 @@ const PatientList = () => {
         </Menu>
       </Grid>
       <Box display="flex" justifyContent="center">
-        <Pagination count={10} color="secondary" />
+        <Pagination
+          page={page}
+          count={pageCount}
+          color="secondary"
+          onChange={(_, value) => setPage(value)}
+        />
       </Box>
     </PageLayout>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  Autocomplete,
   Box,
   Button,
   Grid,
@@ -29,13 +30,23 @@ import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
+import MedicineAutocomplete from "../components/MedicineAutocomplete";
+import PatientAutocomplete from "../../../components/PatientAutocomplete";
 
 const PrescriptionList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [filters, setFilters] = useState({
+    medicines: [],
+    patientId: undefined,
+  });
 
   const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
+
+  const handleChangeFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
 
   return (
     <PageLayout>
@@ -47,27 +58,20 @@ const PrescriptionList = () => {
         {/* Filter fields */}
         <Grid item container xs={12} md={8} spacing={2}>
           <Grid item xs={12} md={4}>
-            <TextField
-              placeholder="Buscar por paciente"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="primary" />
-                  </InputAdornment>
-                ),
-              }}
+            <PatientAutocomplete
+              onChange={(patient) =>
+                handleChangeFilter("patientId", patient?.id || undefined)
+              }
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <TextField
-              placeholder="Buscar por medicamento"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="primary" />
-                  </InputAdornment>
-                ),
-              }}
+            <MedicineAutocomplete
+              onChange={(medicines) =>
+                handleChangeFilter(
+                  "medicines",
+                  medicines.map((medicine) => medicine.id)
+                )
+              }
             />
           </Grid>
           <Grid item xs={12} md={4}>
