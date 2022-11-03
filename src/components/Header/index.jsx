@@ -58,7 +58,7 @@ const LoggedHeader = () => {
   const openMenu = Boolean(menuAnchor);
 
   const getNameInitials = () => {
-    const nameSplited = user?.name?.split(" ");
+    const nameSplited = user?.name?.split(" ").filter((partName) => !!partName);
 
     if (nameSplited.length && user.name) {
       if (nameSplited.length > 1) {
