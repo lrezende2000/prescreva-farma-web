@@ -61,7 +61,6 @@ const LoggedHeader = () => {
     const nameSplited = user?.name?.split(" ").filter((partName) => !!partName);
 
     if (nameSplited.length && user.name) {
-      console.log(user);
       if (nameSplited.length > 1) {
         return `${nameSplited[0][0]}${
           nameSplited[nameSplited.length - 1][0]

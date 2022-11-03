@@ -45,7 +45,6 @@ const Login = () => {
 
       navigate(location.state?.from?.pathname || "/home", { replace: true });
     } catch (err) {
-      console.log(err.message);
     } finally {
       setLoading(false);
     }
@@ -96,7 +95,12 @@ const Login = () => {
                 Não tem uma conta?{" "}
                 <StyledLink to="/criar-conta">Clique aqui</StyledLink>
               </Text> */}
-              <Button fullWidth disabled={loading} type="submit" onClick={handleSubmit}>
+              <Button
+                fullWidth
+                disabled={loading}
+                type="submit"
+                onClick={handleSubmit}
+              >
                 <Text color="white" fontWeight={700}>
                   Entrar
                 </Text>

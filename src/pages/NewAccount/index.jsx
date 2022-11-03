@@ -136,7 +136,6 @@ const NewAccount = () => {
 
     try {
       setLoading(true);
-      console.log(body);
       await api.post("/signup", body);
 
       navigate("/entrar");

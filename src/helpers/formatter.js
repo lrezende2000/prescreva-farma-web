@@ -11,6 +11,12 @@ export const formatBody = (body, rules) => {
     formattedBody = { ...formattedBody, ...numberFields };
   }
 
+  Object.keys(formattedBody).forEach((key) => {
+    if (typeof formattedBody[key] === "string") {
+      formattedBody[key] = formattedBody[key].trim();
+    }
+  });
+
   return formattedBody;
 };
 

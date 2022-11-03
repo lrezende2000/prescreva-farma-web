@@ -15,9 +15,7 @@ const useRefreshToken = () => {
       }
 
       return data.user.token;
-    } catch (err) {
-      console.log(err.response.data);
-    }
+    } catch (err) {}
   };
 
   return refresh;

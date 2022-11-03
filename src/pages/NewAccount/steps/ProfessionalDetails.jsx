@@ -6,8 +6,6 @@ const ProfessionalDetails = () => {
   const { values, setFieldValue, touched, setFieldTouched, errors } =
     useFormikContext();
 
-  console.log(values);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
