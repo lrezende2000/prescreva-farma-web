@@ -9,7 +9,7 @@ import {
 
 import useAxios from "../hooks/useAxios";
 
-const PatientAutocomplete = ({ onChange }) => {
+const PatientAutocomplete = ({ onChange, defaultPatientId }) => {
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState(null);
@@ -26,6 +26,12 @@ const PatientAutocomplete = ({ onChange }) => {
   useEffect(() => {
     onChange && onChange(value);
   }, [value]);
+
+  useEffect(() => {
+    if (defaultPatientId) {
+      setValue(options.find((patient) => patient.id === defaultPatientId) || null);
+    }
+  }, [defaultPatientId, options]);
 
   if (loading) {
     return (

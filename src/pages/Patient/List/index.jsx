@@ -28,10 +28,12 @@ import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
+import DeleteDialog from "../../../components/DeleteDialog";
 
 const PatientList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [filters, setFilters] = useState({
     name: "",
     cpf: "",
@@ -68,6 +70,17 @@ const PatientList = () => {
       setLoading(false);
     }
   }, [page, filters]);
+
+  const handleDeletePatient = async () => {
+    try {
+      await api.delete(`/patient/${anchorEl?.id}`);
+
+      setOpenDelete(false);
+      setAnchorEl(null);
+
+      fetchRows();
+    } catch {}
+  };
 
   useEffect(() => {
     fetchRows();
@@ -167,7 +180,7 @@ const PatientList = () => {
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <StyledTableRow key={row.id}>
+                  <StyledTableRow key={row.id} id={row.id}>
                     <TableCell component="td">{row.id}</TableCell>
                     <TableCell component="td">{row.name}</TableCell>
                     <TableCell component="td">{maskCpf(row.cpf)}</TableCell>
@@ -178,7 +191,10 @@ const PatientList = () => {
                       -
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                      <IconButton
+                        id={row.id}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                      >
                         <MoreVert color="primary" />
                       </IconButton>
                     </TableCell>
@@ -196,7 +212,7 @@ const PatientList = () => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <MenuItem>
+          <MenuItem onClick={() => navigate(`editar/${anchorEl?.id}`)}>
             <Text>Editar</Text>
           </MenuItem>
           <MenuItem>
@@ -205,10 +221,16 @@ const PatientList = () => {
           <MenuItem>
             <Text>Realizar encaminhamento</Text>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={() => setOpenDelete(true)}>
             <Text color="error">Deletar</Text>
           </MenuItem>
         </Menu>
+        <DeleteDialog
+          title="Tem certeza que deseja deletar o paciente?"
+          open={openDelete}
+          onClose={() => setOpenDelete(false)}
+          onConfirmDelete={handleDeletePatient}
+        />
       </Grid>
       <Box display="flex" justifyContent="center">
         <Pagination

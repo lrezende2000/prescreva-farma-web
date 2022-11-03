@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 import useAuth from "../hooks/useAuth";
 import useRefreshToken from "../hooks/useRefreshToken";
@@ -33,7 +33,18 @@ const PersistLogin = () => {
     };
   }, []);
 
-  return isLoading ? <CircularProgress size={40} /> : <Outlet />;
+  return isLoading ? (
+    <Box
+      width="100%"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <CircularProgress />
+    </Box>
+  ) : (
+    <Outlet />
+  );
 };
 
 export default PersistLogin;

@@ -1,4 +1,8 @@
 export const maskCpf = (value) => {
+  if (!value) {
+    return "";
+  }
+
   let v = value.replace(/\D/g, "");
 
   v = v.replace(/(\d{3})(\d)/, "$1.$2");
@@ -10,6 +14,10 @@ export const maskCpf = (value) => {
 };
 
 export const maskPhone = (value) => {
+  if (!value) {
+    return "";
+  }
+
   let v = value.replace(/\D/g, "");
 
   v = v.replace(/(\d{2})(\d)/, "($1)$2");
@@ -20,6 +28,10 @@ export const maskPhone = (value) => {
 };
 
 export const maskTel = (value) => {
+  if (!value) {
+    return "";
+  }
+
   let v = value.replace(/\D/g, "");
 
   v = v.replace(/(\d{2})(\d)/, "($1)$2");
@@ -30,6 +42,10 @@ export const maskTel = (value) => {
 };
 
 export const maskCep = (value) => {
+  if (!value) {
+    return "";
+  }
+
   let v = value.replace(/\D/g, "");
 
   v = v.replace(/(\d{5})(\d)/, "$1-$2");

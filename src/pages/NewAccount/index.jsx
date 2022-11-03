@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { Button } from "@mui/material";
@@ -44,6 +45,15 @@ const NewAccount = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const fieldsByStep = useMemo(
+    () => ({
+      0: ["name", "birthDate", "cpf", "nacionality", "gernder", "phone", "tel"],
+      1: ["crf", "crfState", "email", "password", "passwordConfirmation"],
+      2: ["street", "cep", "number", "district", "complement", "state", "city"],
+    }),
+    []
+  );
+
   const navigate = useNavigate();
 
   const api = useAxios();
@@ -61,6 +71,64 @@ const NewAccount = () => {
     setActiveStep((prev) => (prev <= 0 ? 0 : prev - 1));
   };
 
+  const validationSchema = yup.object().shape({
+    name: yup
+      .string()
+      .required("Nome é obrigatório")
+      .matches(
+        /^[a-z ,.'-áàâãéèêíïóôõöúç]+$/gi,
+        "Informe o nome completo sem números"
+      ),
+    birthDate: yup
+      .date()
+      .typeError("Data no formato errado")
+      .required("Data de nascimento é obrigatória"),
+    cpf: yup
+      .string()
+      .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF no formato errado")
+      .required("CPF é obrigatório"),
+    nacionality: yup.string().required("Nacionalidade é obrigatório"),
+    gender: yup
+      .mixed()
+      .oneOf(["WOMAN", "MEN", "OTHER"], "Gênero errado")
+      .required("Gênero é obrigatório"),
+    tel: yup
+      .string()
+      .matches(/^\(\d{2}\)\d{4}-\d{4}$/, "Telefone no formato erradoo"),
+    phone: yup
+      .string()
+      .matches(/^\(\d{2}\)\d{5}-\d{4}$/, "Celular no formato errado")
+      .required("Celular é obrigatório"),
+    crf: yup
+      .string()
+      .required("CRF é obrigatório")
+      .matches(/^\d{4}/, "O CRF só deve conter números. Ex: 1234"),
+    crfState: yup.string().required("Estado do CRF é obrigatório"),
+    email: yup
+      .string()
+      .required("Email é obrigatório")
+      .email("Email incorreto"),
+    password: yup
+      .string()
+      .required("Senha é obrigatória")
+      .min(6, "Senha deve ter no mínimo 6 caracteres")
+      .max(20, "Senha deve ter no máximo 20 caracteres"),
+    passwordConfirmation: yup
+      .string()
+      .required("Confirmação de senha é obrigatória")
+      .oneOf([yup.ref("password"), null], "Senhas não conferem"),
+    street: yup.string().required("Rua é obrigatória"),
+    cep: yup
+      .string()
+      .required("CEP é obrigatório")
+      .matches(/^\d{5}-\d{3}/, "CEP incorreto"),
+    number: yup.string().required("Número é obrigatório"),
+    district: yup.string().required("Bairro é obrigatório"),
+    complement: yup.string(),
+    state: yup.string().required("Estado é obrigatório"),
+    city: yup.string().required("Cidade é obrigatória"),
+  });
+
   const handleSubmit = async (values) => {
     const body = formatBody(values, {
       numberFields: ["phone", "tel", "cep", "cpf"],
@@ -72,8 +140,7 @@ const NewAccount = () => {
       await api.post("/signup", body);
 
       navigate("/entrar");
-    } catch (err) {
-      console.log(err.message);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -108,36 +175,44 @@ const NewAccount = () => {
                 city: "",
               }}
               onSubmit={handleSubmit}
+              validationSchema={validationSchema}
+              validateOnMount
             >
-              {({ handleSubmit }) => (
-                <>
-                  {activeStep === 0 && <PersonalDetails />}
-                  {activeStep === 1 && <ProfessionalDetails />}
-                  {activeStep === 2 && <ProfessionalAddress />}
-                  <ButtonsContainer>
-                    {!isFirstStep ? (
-                      <Button variant="outlined" onClick={handlePrevStep}>
-                        Voltar
-                      </Button>
-                    ) : (
+              {({ handleSubmit, errors }) => {
+                const hasError = fieldsByStep[activeStep]
+                  .map((field) => !!errors[field])
+                  .some((error) => error);
+
+                return (
+                  <>
+                    {activeStep === 0 && <PersonalDetails />}
+                    {activeStep === 1 && <ProfessionalDetails />}
+                    {activeStep === 2 && <ProfessionalAddress />}
+                    <ButtonsContainer>
+                      {!isFirstStep ? (
+                        <Button variant="outlined" onClick={handlePrevStep}>
+                          Voltar
+                        </Button>
+                      ) : (
+                        <Button
+                          color="error"
+                          variant="outlined"
+                          onClick={() => navigate("/entrar")}
+                        >
+                          Cancelar
+                        </Button>
+                      )}
                       <Button
-                        color="error"
-                        variant="outlined"
-                        onClick={() => navigate("/entrar")}
+                        disabled={loading || hasError}
+                        endIcon={!isLastStep && <ArrowRightAlt />}
+                        onClick={isLastStep ? handleSubmit : handleNextStep}
                       >
-                        Cancelar
+                        {isLastStep ? "Concluir" : "Continuar"}
                       </Button>
-                    )}
-                    <Button
-                      disabled={loading}
-                      endIcon={!isLastStep && <ArrowRightAlt />}
-                      onClick={isLastStep ? handleSubmit : handleNextStep}
-                    >
-                      {isLastStep ? "Concluir" : "Continuar"}
-                    </Button>
-                  </ButtonsContainer>
-                </>
-              )}
+                    </ButtonsContainer>
+                  </>
+                );
+              }}
             </Formik>
           </FormContainer>
         </FormWrapper>

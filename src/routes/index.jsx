@@ -15,6 +15,7 @@ import CreatePatient from "../pages/Patient/Create";
 import CreateAppointment from "../pages/Appointment/Create";
 import CreatePrescription from "../pages/Prescription/Create";
 import CreateForward from "../pages/Forward/Create";
+import UpdatePatient from "../pages/Patient/Update";
 
 const Router = () => {
   return (
@@ -29,6 +30,7 @@ const Router = () => {
             <Route path="home" element={<Home />} />
             <Route path="pacientes" element={<PatientList />} />
             <Route path="pacientes/novo" element={<CreatePatient />} />
+            <Route path="pacientes/editar/:id" element={<UpdatePatient />} />
             <Route path="consultas" element={<AppointmentList />} />
             <Route path="consultas/novo" element={<CreateAppointment />} />
             <Route path="prescricao" element={<PrescriptionList />} />

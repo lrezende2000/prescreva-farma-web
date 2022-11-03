@@ -4,16 +4,26 @@ import { useFormikContext } from "formik";
 
 import { maskCep, unmaskNumber } from "../../../helpers/mask";
 import { cepApi } from "../../../services/cep";
+import UfSelect from "../../../components/UfSelect";
 
 const ProfessionalAddress = () => {
   const [disableFields, setDisableFields] = useState(true);
 
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setFieldValue, touched, setFieldTouched, errors } =
+    useFormikContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     setFieldValue(name, value);
+  };
+
+  const handleFocus = (e, name) => {
+    if (!e.target.name) {
+      setFieldTouched(name, true);
+    }
+
+    setFieldTouched(e.target.name, true);
   };
 
   const handleGetCep = async (cep) => {
@@ -54,16 +64,20 @@ const ProfessionalAddress = () => {
           onChange={(e) =>
             setFieldValue(e.target.name, maskCep(e.target.value))
           }
+          onFocus={handleFocus}
+          error={touched.cep && !!errors.cep}
+          helperText={touched.cep && errors.cep}
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <TextField
-          disabled={disableFields}
+        <UfSelect
           label="Estado"
-          placeholder="Informe seu estado"
-          name="state"
-          value={values.state}
-          onChange={handleChange}
+          defaultValue={values.state}
+          disabled={disableFields}
+          isError={touched.state && !!errors.state}
+          error={touched.state && errors.state}
+          onChange={(uf) => setFieldValue("state", uf?.abbr)}
+          onFocus={() => setFieldTouched("state", true)}
         />
       </Grid>
       <Grid item xs={12} md={6}>
@@ -74,6 +88,9 @@ const ProfessionalAddress = () => {
           name="city"
           value={values.city}
           onChange={handleChange}
+          onFocus={handleFocus}
+          error={touched.city && !!errors.city}
+          helperText={touched.city && errors.city}
         />
       </Grid>
       <Grid item xs={12} md={6}>
@@ -84,6 +101,9 @@ const ProfessionalAddress = () => {
           name="district"
           value={values.district}
           onChange={handleChange}
+          onFocus={handleFocus}
+          error={touched.district && !!errors.district}
+          helperText={touched.district && errors.district}
         />
       </Grid>
       <Grid item xs={12} md={6}>
@@ -94,6 +114,9 @@ const ProfessionalAddress = () => {
           name="street"
           value={values.street}
           onChange={handleChange}
+          onFocus={handleFocus}
+          error={touched.street && !!errors.street}
+          helperText={touched.street && errors.street}
         />
       </Grid>
       <Grid item xs={12} md={6}>
@@ -103,6 +126,9 @@ const ProfessionalAddress = () => {
           name="number"
           value={values.number}
           onChange={handleChange}
+          onFocus={handleFocus}
+          error={touched.number && !!errors.number}
+          helperText={touched.number && errors.number}
         />
       </Grid>
       <Grid item xs={12}>
@@ -114,6 +140,9 @@ const ProfessionalAddress = () => {
           name="complement"
           value={values.complement}
           onChange={handleChange}
+          onFocus={handleFocus}
+          error={touched.complement && !!errors.complement}
+          helperText={touched.complement && errors.complement}
         />
       </Grid>
     </Grid>
