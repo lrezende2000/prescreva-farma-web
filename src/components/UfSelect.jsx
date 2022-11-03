@@ -37,7 +37,7 @@ const UfSelect = ({
     if (defaultValue) {
       setValue(options.find((uf) => uf.abbr === defaultValue) || null);
     }
-  }, [options]);
+  }, [defaultValue, options]);
 
   if (loading) {
     return (

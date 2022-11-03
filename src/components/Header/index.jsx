@@ -58,7 +58,7 @@ const LoggedHeader = () => {
   const openMenu = Boolean(menuAnchor);
 
   const getNameInitials = () => {
-    const nameSplited = user.name.split(" ");
+    const nameSplited = user?.name?.split(" ");
 
     if (nameSplited.length && user.name) {
       if (nameSplited.length > 1) {
@@ -95,7 +95,7 @@ const LoggedHeader = () => {
             sx={{ cursor: "pointer" }}
           >
             <IconButton>
-              <Avatar>{getNameInitials("")}</Avatar>
+              <Avatar>{getNameInitials()}</Avatar>
             </IconButton>
             <Text color="white" variant="small" fontWeight={700}>
               {user.name}
