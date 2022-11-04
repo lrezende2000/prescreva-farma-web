@@ -1,14 +1,21 @@
-import { Autocomplete, Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { useFormikContext } from "formik";
+
+import PatientAutocomplete from "../../../components/PatientAutocomplete";
 
 const PatientForm = () => {
+  const { setFieldValue, setFieldTouched, touched, errors, values } =
+    useFormikContext();
+
   return (
     <Grid container item>
       <Grid item xs={12} md={6}>
-        <Autocomplete
-          fullWidth
-          size="small"
-          options={[]}
-          renderInput={(props) => <TextField {...props} label="Paciente" />}
+        <PatientAutocomplete
+          defaultPatientId={values.patientId}
+          onChange={(patient) => setFieldValue("patientId", patient?.id)}
+          onFocus={() => setFieldTouched("patientId", true)}
+          isError={touched.patientId && !!errors.patientId}
+          error={touched.patientId && errors.patientId}
         />
       </Grid>
     </Grid>

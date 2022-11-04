@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Autocomplete,
   Box,
   Button,
+  Chip,
   Grid,
   IconButton,
   InputAdornment,
@@ -26,27 +27,77 @@ import {
   Search,
 } from "@mui/icons-material";
 
+import useAxios from "../../../hooks/useAxios";
+
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
-
-import { StyledTableHead, StyledTableRow } from "./styles";
 import MedicineAutocomplete from "../components/MedicineAutocomplete";
 import PatientAutocomplete from "../../../components/PatientAutocomplete";
+
+import { StyledTableHead, StyledTableRow } from "./styles";
+import { formatUrlQuery } from "../../../helpers/formatter";
+import moment from "moment";
+import DeleteDialog from "../../../components/DeleteDialog";
 
 const PrescriptionList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [filters, setFilters] = useState({
-    medicines: [],
+    // medicines: [],
     patientId: undefined,
   });
+  const [loading, setLoading] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalRows, setTotalRows] = useState(0);
 
   const navigate = useNavigate();
 
+  const api = useAxios();
+
   const open = Boolean(anchorEl);
+
+  const pageCount = useMemo(() => Math.ceil(totalRows / 15), [totalRows]);
 
   const handleChangeFilter = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
+
+  const fetchRows = useCallback(async () => {
+    try {
+      setLoading(true);
+      const url = formatUrlQuery("/prescription/list", { ...filters, page });
+
+      const { data } = await api.get(url);
+
+      setRows(data.rows);
+      setTotalRows(data.totalRows);
+    } catch (err) {
+      setRows([]);
+      setTotalRows(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, filters]);
+
+  const handleDeletePrescription = async () => {
+    try {
+      await api.delete(`/prescription/${anchorEl?.id}`);
+
+      setOpenDelete(false);
+      setAnchorEl(null);
+
+      fetchRows();
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchRows();
+  }, [page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [totalRows]);
 
   return (
     <PageLayout>
@@ -60,11 +111,11 @@ const PrescriptionList = () => {
           <Grid item xs={12} md={4}>
             <PatientAutocomplete
               onChange={(patient) =>
-                handleChangeFilter("patientId", patient?.id || undefined)
+                handleChangeFilter("patientId", patient?.id)
               }
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <MedicineAutocomplete
               onChange={(medicines) =>
                 handleChangeFilter(
@@ -73,8 +124,8 @@ const PrescriptionList = () => {
                 )
               }
             />
-          </Grid>
-          <Grid item xs={12} md={4}>
+          </Grid> */}
+          {/* <Grid item xs={12} md={4}>
             <TextField
               placeholder="Buscar por data"
               type="date"
@@ -86,7 +137,7 @@ const PrescriptionList = () => {
                 ),
               }}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
         {/* Action buttons */}
         <Grid item container xs={12} md={4}>
@@ -98,7 +149,12 @@ const PrescriptionList = () => {
               justifyContent="flex-end"
               gap={1}
             >
-              <Button startIcon={<FilterList />} variant="outlined">
+              <Button
+                startIcon={<FilterList />}
+                disabled={loading}
+                variant="outlined"
+                onClick={fetchRows}
+              >
                 Filtrar
               </Button>
               <Button startIcon={<Add />} onClick={() => navigate("novo")}>
@@ -123,28 +179,29 @@ const PrescriptionList = () => {
                 </StyledTableHead>
               </TableHead>
               <TableBody>
-                <StyledTableRow>
-                  <TableCell component="td">1</TableCell>
-                  <TableCell component="td">Lucas Rezende</TableCell>
-                  <TableCell component="td">Tylenol, Novalgina</TableCell>
-                  <TableCell component="td">20/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
-                <StyledTableRow>
-                  <TableCell component="td">2</TableCell>
-                  <TableCell component="td">Arthur Porto</TableCell>
-                  <TableCell component="td">Tylenol, Novalgina</TableCell>
-                  <TableCell component="td">20/12/2022</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <MoreVert color="primary" />
-                    </IconButton>
-                  </TableCell>
-                </StyledTableRow>
+                {rows.map((row) => (
+                  <StyledTableRow key={row.id}>
+                    <TableCell component="td">{row.id}</TableCell>
+                    <TableCell component="td">{row.patient.name}</TableCell>
+                    <TableCell component="td">
+                      {row.prescriptionMedicines.map((prescriptionMedicine) => (
+                        <Chip
+                          size="small"
+                          key={prescriptionMedicine.medicine.name}
+                          label={prescriptionMedicine.medicine.name}
+                        />
+                      ))}
+                    </TableCell>
+                    <TableCell component="td">
+                      {moment(row.createdAt).format("DD/MM/YYYY")}
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                        <MoreVert color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -168,8 +225,19 @@ const PrescriptionList = () => {
           </MenuItem>
         </Menu>
       </Grid>
+      <DeleteDialog
+        title="Tem certeza que deseja deletar a prescrição?"
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
+        onConfirmDelete={handleDeletePrescription}
+      />
       <Box display="flex" justifyContent="center">
-        <Pagination count={10} color="secondary" />
+        <Pagination
+          page={page}
+          count={pageCount}
+          color="secondary"
+          onChange={(_, value) => setPage(value)}
+        />
       </Box>
     </PageLayout>
   );

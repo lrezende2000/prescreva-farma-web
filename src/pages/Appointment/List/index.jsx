@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 import {
   Box,
   Button,
@@ -19,13 +20,14 @@ import {
 } from "@mui/material";
 import { Add, CalendarMonth, FilterList, MoreVert } from "@mui/icons-material";
 
+import useAxios from "../../../hooks/useAxios";
+import { formatUrlQuery } from "../../../helpers/formatter";
+
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
+import PatientAutocomplete from "../../../components/PatientAutocomplete";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
-import { formatUrlQuery } from "../../../helpers/formatter";
-import useAxios from "../../../hooks/useAxios";
-import PatientAutocomplete from "../../../components/PatientAutocomplete";
 
 const AppointmentList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -66,6 +68,12 @@ const AppointmentList = () => {
       setLoading(false);
     }
   }, [page, filters]);
+
+  const formatAppointmentTime = (start, end) => {
+    const day = moment(start).format("DD/MM/YYYY HH:mm");
+
+    return `${day} - ${moment(end).format("HH:mm")}`;
+  };
 
   useEffect(() => {
     fetchRows();
@@ -115,7 +123,12 @@ const AppointmentList = () => {
               justifyContent="flex-end"
               gap={1}
             >
-              <Button startIcon={<FilterList />} variant="outlined">
+              <Button
+                disabled={loading}
+                onClick={fetchRows}
+                startIcon={<FilterList />}
+                variant="outlined"
+              >
                 Filtrar
               </Button>
               <Button startIcon={<Add />} onClick={() => navigate("novo")}>
@@ -143,7 +156,9 @@ const AppointmentList = () => {
                   <StyledTableRow key={row.id}>
                     <TableCell component="td">{row.id}</TableCell>
                     <TableCell component="td">{row.patient.name}</TableCell>
-                    <TableCell component="td">{row.date}</TableCell>
+                    <TableCell component="td">
+                      {formatAppointmentTime(row.start, row.end)}
+                    </TableCell>
                     <TableCell align="right">
                       <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
                         <MoreVert color="primary" />

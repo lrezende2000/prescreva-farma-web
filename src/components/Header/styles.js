@@ -57,6 +57,7 @@ export const HeaderWrapper = styled.div`
 
   img {
     height: 60px;
+    cursor: pointer;
   }
 
   @media screen and (min-width: 821px) {

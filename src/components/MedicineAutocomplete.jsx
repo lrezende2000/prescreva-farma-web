@@ -9,12 +9,13 @@ import {
 
 import useAxios from "../hooks/useAxios";
 
-const PatientAutocomplete = ({
+const MedicineAutocomplete = ({
   onChange,
-  defaultPatientId,
+  defaultMedicineId,
   isError,
   error,
   onFocus = () => {},
+  optionLabel,
 }) => {
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);
@@ -24,18 +25,18 @@ const PatientAutocomplete = ({
 
   useEffect(() => {
     api
-      .get("/patient/list/all")
+      .get("/medicines/list/all")
       .then(({ data }) => setOptions(data.rows))
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    if (defaultPatientId) {
+    if (defaultMedicineId) {
       setValue(
-        options.find((patient) => patient.id === defaultPatientId) || null
+        options.find((medicine) => medicine.id === defaultMedicineId) || null
       );
     }
-  }, [defaultPatientId, options]);
+  }, [defaultMedicineId, options]);
 
   if (loading) {
     return (
@@ -62,16 +63,16 @@ const PatientAutocomplete = ({
           {...params}
           error={isError}
           helperText={error}
-          label="Paciente"
+          label="Fármacos"
         />
       )}
       renderOption={(params, option) => (
         <MenuItem {...params} key={option.id}>
-          {option.name}
+          {optionLabel ? optionLabel(option) : option.name}
         </MenuItem>
       )}
     />
   );
 };
 
-export default memo(PatientAutocomplete);
+export default memo(MedicineAutocomplete);
