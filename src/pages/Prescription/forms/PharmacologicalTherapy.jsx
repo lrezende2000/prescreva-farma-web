@@ -1,3 +1,4 @@
+import { useId } from "react";
 import * as yup from "yup";
 import { Formik, useFormikContext } from "formik";
 import { toast } from "react-toastify";
@@ -33,11 +34,12 @@ const PharmacologicalTherapy = () => {
       const newMedicines = [...prevMedicines, { ...posologyValues }];
 
       setFieldValue("medicines", newMedicines);
+      posologyActions.resetForm();
     } else {
       toast.warn("Medicamento já adicionado");
     }
 
-    posologyActions.resetForm();
+    posologyActions.setSubmitting(false);
   };
 
   const handleDeleteMedicine = (id) => {
@@ -98,7 +100,7 @@ const PharmacologicalTherapy = () => {
           medicineName: "",
           concentration: "",
           instructions: "",
-          administrationForm: "",
+          administrationForm: undefined,
         }}
         validationSchema={posologyValidationSchema}
         onSubmit={handleAddMedicine}
@@ -109,6 +111,9 @@ const PharmacologicalTherapy = () => {
             (value) => !value
           );
 
+          // console.log(posologyFormik.values)
+          console.log(posologyFormik.isSubmitting);
+
           return (
             <>
               <Grid item xs={12} sm={6}>
@@ -116,8 +121,8 @@ const PharmacologicalTherapy = () => {
                   key={posologyFormik.values.medicineId}
                   defaultMedicineId={posologyFormik.values.medicineId}
                   onChange={(value) => {
-                    posologyFormik.setFieldValue("medicineId", value?.id);
                     posologyFormik.setFieldValue("medicineName", value?.name);
+                    posologyFormik.setFieldValue("medicineId", value?.id);
                   }}
                   onFocus={() =>
                     posologyFormik.setFieldTouched("medicineId", true)
@@ -165,7 +170,6 @@ const PharmacologicalTherapy = () => {
                       posologyFormik.setFieldTouched("administrationForm", true)
                     }
                   >
-                    <MenuItem value=""></MenuItem>
                     <MenuItem value="Uso oral">Uso Oral</MenuItem>
                     <MenuItem value="Uso externo">Uso Externo</MenuItem>
                   </Select>
@@ -232,7 +236,7 @@ const PharmacologicalTherapy = () => {
                   gap={1}
                 >
                   <Button
-                    disabled={posologyFormik.isSubmitting || hasError}
+                    disabled={posologyFormik.is || hasError}
                     onClick={posologyFormik.handleSubmit}
                   >
                     Adicionar

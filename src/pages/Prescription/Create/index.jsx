@@ -68,7 +68,11 @@ const CreatePrescription = () => {
   };
 
   const validationSchema = yup.object().shape({
-    patientId: yup.number().integer().required("Paciente é obrigatório"),
+    patientId: yup
+      .number()
+      .integer()
+      .required("Paciente é obrigatório")
+      .typeError("Paciente é obrigatório"),
     medicines: yup
       .array(
         yup.object().shape({
