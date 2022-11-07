@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Formik } from "formik";
 import { Button, Grid } from "@mui/material";
 import { ArrowRightAlt, Reply } from "@mui/icons-material";
@@ -19,6 +19,8 @@ const CreateForward = () => {
   const navigate = useNavigate();
 
   const api = useAxios();
+
+  const [searchParams] = useSearchParams();
 
   const steps = useMemo(
     () => [
@@ -73,7 +75,9 @@ const CreateForward = () => {
         <Stepper steps={steps} />
         <Formik
           initialValues={{
-            patientId: null,
+            patientId: searchParams.get("patientId")
+              ? parseInt(searchParams.get("patientId"))
+              : null,
             medicalExperience: "",
             forwardReason: "",
             showFooter: false,

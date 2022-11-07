@@ -64,8 +64,6 @@ const PatientList = () => {
 
       const { data } = await api.get(url);
 
-      console.log(data.rows);
-
       setRows(data.rows);
       setTotalRows(data.totalRows);
     } catch (err) {
@@ -225,10 +223,10 @@ const PatientList = () => {
           <MenuItem onClick={() => navigate(`editar/${anchorEl?.id}`)}>
             <Text>Editar</Text>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={() => navigate(`/prescricao/novo/?patientId=${anchorEl?.id}`)}>
             <Text>Realizar prescrição</Text>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={() => navigate(`/encaminhamentos/novo/?patientId=${anchorEl?.id}`)}>
             <Text>Realizar encaminhamento</Text>
           </MenuItem>
           <MenuItem onClick={() => setOpenDelete(true)}>

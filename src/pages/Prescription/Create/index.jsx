@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, Grid } from "@mui/material";
 import {
   ArrowRightAlt,
@@ -24,6 +24,8 @@ const CreatePrescription = () => {
   const [activeStep, setActiveStep] = useState(0);
 
   const api = useAxios();
+
+  const [searchParams] = useSearchParams();
 
   const steps = useMemo(
     () => [
@@ -117,7 +119,9 @@ const CreatePrescription = () => {
         <Stepper activeStep={activeStep} steps={steps} />
         <Formik
           initialValues={{
-            patientId: null,
+            patientId: searchParams.get("patientId")
+            ? parseInt(searchParams.get("patientId"))
+            : null,
             medicines: [],
             aditionalInfos: "",
             nonPharmacologicalTherapy: "",

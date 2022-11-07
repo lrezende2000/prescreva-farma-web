@@ -13,7 +13,6 @@ import { medicalExperience } from "../../../data/medicalExperience";
 const ForwardForm = () => {
   const { values, setFieldValue, setFieldTouched, touched, errors } =
     useFormikContext();
-
   return (
     <Grid container item>
       <Grid item xs={12} md={6}>
