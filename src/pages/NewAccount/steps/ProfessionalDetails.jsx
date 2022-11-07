@@ -2,6 +2,7 @@ import { PhotoCamera } from "@mui/icons-material";
 import { Button, Chip, Grid, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
 import UfSelect from "../../../components/UfSelect";
+import { maskPhone, maskTel } from "../../../helpers/mask";
 
 const ProfessionalDetails = () => {
   const { values, setFieldValue, touched, setFieldTouched, errors } =
@@ -31,7 +32,7 @@ const ProfessionalDetails = () => {
             accept="image/*"
             type="file"
           />
-          Insira sua logo
+          Insira sua identidade
         </Button>
         {values.logo && (
           <Chip
@@ -65,6 +66,26 @@ const ProfessionalDetails = () => {
         />
       </Grid>
       <Grid item xs={12} md={6}>
+        <TextField
+          label="Telefone profissional"
+          placeholder="(99)99999-9999"
+          name="professionalPhone"
+          value={values.professionalPhone}
+          onChange={(e) => {
+            const value = e.target.value;
+
+            if (value.length >= 14) {
+              setFieldValue(e.target.name, maskPhone(value));
+            } else {
+              setFieldValue(e.target.name, maskTel(value));
+            }
+          }}
+          onFocus={handleFocus}
+          error={touched.professionalPhone && !!errors.professionalPhone}
+          helperText={touched.professionalPhone && errors.professionalPhone}
+        />
+      </Grid>
+      <Grid item xs={12}>
         <TextField
           label="E-mail"
           placeholder="Informa seu e-mail"

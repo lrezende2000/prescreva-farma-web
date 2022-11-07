@@ -1,3 +1,4 @@
+import { memo } from "react";
 import * as yup from "yup";
 import { Formik, useFormikContext } from "formik";
 import { toast } from "react-toastify";
@@ -15,8 +16,8 @@ import {
   Tooltip,
 } from "@mui/material";
 
-import Text from "../../../components/Text";
-import MedicineAutocomplete from "../../../components/MedicineAutocomplete";
+import Text from "../../../../components/Text";
+import MedicineAutocomplete from "../../../../components/MedicineAutocomplete";
 
 const PharmacologicalTherapy = () => {
   const { values, setFieldValue, setFieldTouched, errors, touched } =
@@ -33,7 +34,12 @@ const PharmacologicalTherapy = () => {
       const newMedicines = [...prevMedicines, { ...posologyValues }];
 
       setFieldValue("medicines", newMedicines);
+
       posologyActions.resetForm();
+      posologyActions.setFieldValue(
+        "administrationForm",
+        posologyValues.administrationForm
+      );
     } else {
       toast.warn("Medicamento já adicionado");
     }
@@ -65,8 +71,8 @@ const PharmacologicalTherapy = () => {
     administrationForm: yup
       .string()
       .oneOf(
-        ["Uso oral", "Uso externo"],
-        "Forma de administração só pode ser 'Uso oral' ou 'Uso externo'"
+        ["Uso Interno", "Uso Externo"],
+        "Forma de administração só pode ser 'Uso Interno' ou 'Uso Externo'"
       )
       .required("Forma de administração é obrigatória"),
   });
@@ -99,19 +105,14 @@ const PharmacologicalTherapy = () => {
           medicineName: "",
           concentration: "",
           instructions: "",
-          administrationForm: undefined,
+          administrationForm: "",
         }}
         validationSchema={posologyValidationSchema}
         onSubmit={handleAddMedicine}
-        validateOnMount
       >
         {(posologyFormik) => {
-          const hasError = Object.values(posologyFormik.values).some(
-            (value) => !value
-          );
-
-          // console.log(posologyFormik.values)
-          console.log(posologyFormik.isSubmitting);
+          const hasError =
+            Object.values(posologyFormik.values).some((value) => !value);
 
           return (
             <>
@@ -169,8 +170,8 @@ const PharmacologicalTherapy = () => {
                       posologyFormik.setFieldTouched("administrationForm", true)
                     }
                   >
-                    <MenuItem value="Uso oral">Uso Oral</MenuItem>
-                    <MenuItem value="Uso externo">Uso Externo</MenuItem>
+                    <MenuItem value="Uso Interno">Uso Interno</MenuItem>
+                    <MenuItem value="Uso Externo">Uso Externo</MenuItem>
                   </Select>
                   {posologyFormik.touched.administrationForm &&
                     !!posologyFormik.errors.administrationForm && (
@@ -262,4 +263,4 @@ const PharmacologicalTherapy = () => {
   );
 };
 
-export default PharmacologicalTherapy;
+export default memo(PharmacologicalTherapy);

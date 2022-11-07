@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
 import {
   Box,
   Button,
@@ -21,7 +20,7 @@ import {
 import { Add, CalendarMonth, FilterList, MoreVert } from "@mui/icons-material";
 
 import useAxios from "../../../hooks/useAxios";
-import { formatUrlQuery } from "../../../helpers/formatter";
+import { formatAppointmentTime, formatUrlQuery } from "../../../helpers/formatter";
 
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
@@ -68,12 +67,6 @@ const AppointmentList = () => {
       setLoading(false);
     }
   }, [page, filters]);
-
-  const formatAppointmentTime = (start, end) => {
-    const day = moment(start).format("DD/MM/YYYY HH:mm");
-
-    return `${day} - ${moment(end).format("HH:mm")}`;
-  };
 
   useEffect(() => {
     fetchRows();

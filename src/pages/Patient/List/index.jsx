@@ -21,7 +21,10 @@ import {
 import { Add, FilterList, MoreVert, Search } from "@mui/icons-material";
 
 import { maskCpf } from "../../../helpers/mask";
-import { formatUrlQuery } from "../../../helpers/formatter";
+import {
+  formatAppointmentTime,
+  formatUrlQuery,
+} from "../../../helpers/formatter";
 import useAxios from "../../../hooks/useAxios";
 
 import PageLayout from "../../../components/PageLayout";
@@ -60,6 +63,8 @@ const PatientList = () => {
       const url = formatUrlQuery("/patient/list", { ...filters, page });
 
       const { data } = await api.get(url);
+
+      console.log(data.rows);
 
       setRows(data.rows);
       setTotalRows(data.totalRows);
@@ -188,7 +193,12 @@ const PatientList = () => {
                       {moment().diff(moment(row.birthDate), "years")}
                     </TableCell>
                     <TableCell component="td" align="center">
-                      -
+                      {row.appointments?.length
+                        ? formatAppointmentTime(
+                            row.appointments[0].start,
+                            row.appointments[0].end
+                          )
+                        : "-"}
                     </TableCell>
                     <TableCell align="right">
                       <IconButton

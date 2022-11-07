@@ -1,3 +1,4 @@
+import moment from "moment";
 import { unmaskNumber } from "./mask";
 
 export const formatBody = (body, rules = {}) => {
@@ -38,4 +39,10 @@ export const formatUrlQuery = (baseUrl, query) => {
   }
 
   return url;
+};
+
+export const formatAppointmentTime = (start, end) => {
+  const day = moment(start).format("DD/MM/YYYY HH:mm");
+
+  return `${day} - ${moment(end).format("HH:mm")}`;
 };

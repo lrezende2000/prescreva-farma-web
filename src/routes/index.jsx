@@ -16,6 +16,8 @@ import CreateAppointment from "../pages/Appointment/Create";
 import CreatePrescription from "../pages/Prescription/Create";
 import CreateForward from "../pages/Forward/Create";
 import UpdatePatient from "../pages/Patient/Update";
+import ViewPrescription from "../pages/Prescription/View";
+import ViewForward from "../pages/Forward/View";
 
 const Router = () => {
   return (
@@ -35,8 +37,10 @@ const Router = () => {
             <Route path="consultas/novo" element={<CreateAppointment />} />
             <Route path="prescricao" element={<PrescriptionList />} />
             <Route path="prescricao/novo" element={<CreatePrescription />} />
+            <Route path="prescricao/ver/:id" element={<ViewPrescription />} />
             <Route path="encaminhamentos" element={<ForwardList />} />
             <Route path="encaminhamentos/novo" element={<CreateForward />} />
+            <Route path="encaminhamentos/ver/:id" element={<ViewForward />} />
             <Route path="farmacos" element={<MedicineList />} />
           </Route>
         </Route>

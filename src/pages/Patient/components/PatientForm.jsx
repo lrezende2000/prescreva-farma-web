@@ -41,8 +41,7 @@ const PatientForm = ({ handleToggleSubmit, initialValues }) => {
   const validationSchema = yup.object().shape({
     email: yup
       .string()
-      .email("Email no formato errado")
-      .required("Email é obrigatório"),
+      .email("Email no formato errado"),
     name: yup
       .string()
       .max(100, "Nome precisa ter menos de 100 caracteres")

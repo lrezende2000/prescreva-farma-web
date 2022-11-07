@@ -99,6 +99,13 @@ const NewAccount = () => {
       .string()
       .matches(/^\(\d{2}\)\d{5}-\d{4}$/, "Celular no formato errado")
       .required("Celular é obrigatório"),
+    professionalPhone: yup
+      .string()
+      .matches(
+        /(^\(\d{2}\)\d{5}-\d{4}$|^\(\d{2}\)\d{4}-\d{4}$)/,
+        "Celular profissional no formato errado"
+      )
+      .required("Celular profissional é obrigatório"),
     crf: yup
       .string()
       .required("CRF é obrigatório")
@@ -127,20 +134,18 @@ const NewAccount = () => {
     complement: yup.string(),
     state: yup.string().required("Estado é obrigatório"),
     city: yup.string().required("Cidade é obrigatória"),
-    logo: yup.mixed().required("Logo é obrigatória"),
+    logo: yup.mixed(),
   });
 
   const handleSubmit = async (values) => {
     const { logo, ...body } = formatBody(values, {
-      numberFields: ["phone", "tel", "cep", "cpf"],
+      numberFields: ["phone", "tel", "cep", "cpf", "professionalPhone"],
     });
 
     const formData = new FormData();
 
     formData.append("logo", logo);
-    formData.append("json", body);
-
-    console.log(body)
+    formData.append("json", JSON.stringify(body));
 
     try {
       setLoading(true);
@@ -148,7 +153,7 @@ const NewAccount = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // navigate("/entrar");
+      navigate("/entrar");
     } catch {
     } finally {
       setLoading(false);
@@ -169,6 +174,7 @@ const NewAccount = () => {
                 nacionality: "",
                 gender: "",
                 phone: "",
+                professionalPhone: "",
                 tel: "",
                 crf: "",
                 crfState: "",

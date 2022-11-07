@@ -59,6 +59,7 @@ const Login = () => {
         >
           {({ values, setFieldValue, handleSubmit, errors }) => (
             <LoginForm>
+              <img src="/assets/logo/blue.png" alt="Prescreva Farma Logo" height={150} />
               <Text variant="large" color="primary_blue">
                 PrescrevaFarma
               </Text>

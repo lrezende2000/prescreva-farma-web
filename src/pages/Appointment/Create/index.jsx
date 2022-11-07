@@ -55,7 +55,11 @@ const CreateAppointment = () => {
         }
       )
       .required("Horário final é obrigatório"),
-    patientId: yup.number().integer().required("Paciente é obrigatório"),
+    patientId: yup
+      .number()
+      .integer()
+      .required("Paciente é obrigatório")
+      .typeError("Paciente é obrigatório"),
   });
 
   const handleToggleSubmit = async (values) => {

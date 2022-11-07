@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Button, Grid } from "@mui/material";
 import {
   ArrowRightAlt,
-  Close,
   LocalPharmacy,
   Medication,
   Person,
@@ -15,16 +14,14 @@ import PageLayout from "../../../components/PageLayout";
 import Stepper from "../../../components/Stepper";
 
 import { Container } from "./styles";
-import PatientForm from "../forms/PatientForm";
-import PharmacologicalTherapy from "../forms/PharmacologicalTherapy";
-import NonPharmacologicalTherapy from "../forms/NonPharmacologicalTherapy";
+import PatientForm from "../components/forms/PatientForm";
+import PharmacologicalTherapy from "../components/forms/PharmacologicalTherapy";
+import NonPharmacologicalTherapy from "../components/forms/NonPharmacologicalTherapy";
 import useAxios from "../../../hooks/useAxios";
 import { formatBody } from "../../../helpers/formatter";
-import PrescriptionPdfPreview from "../components/PrescriptionPdfPreview";
 
 const CreatePrescription = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [openPreview, setOpenPreview] = useState(false);
 
   const api = useAxios();
 
@@ -94,12 +91,13 @@ const CreatePrescription = () => {
           administrationForm: yup
             .string()
             .oneOf(
-              ["Uso oral", "Uso externo"],
-              "Forma de administração só pode ser 'Uso oral' ou 'Uso externo'"
+              ["Uso Interno", "Uso Externo"],
+              "Forma de administração só pode ser 'Uso Interno' ou 'Uso Externo'"
             )
             .required("Forma de administração é obrigatória"),
         })
       )
+      .min(1)
       .required("Fármacos são obrigatórios"),
     aditionalInfos: yup.string(),
     nonPharmacologicalTherapy: yup.string(),
@@ -116,11 +114,6 @@ const CreatePrescription = () => {
   return (
     <PageLayout>
       <Container>
-        <Close onClick={() => setOpenPreview(true)} />
-        <PrescriptionPdfPreview
-          open={openPreview}
-          onClose={() => setOpenPreview(false)}
-        />
         <Stepper activeStep={activeStep} steps={steps} />
         <Formik
           initialValues={{

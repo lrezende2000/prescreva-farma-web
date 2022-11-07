@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
   Grid,
   IconButton,
-  InputAdornment,
   Menu,
   MenuItem,
   Pagination,
@@ -17,15 +15,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TextField,
 } from "@mui/material";
-import {
-  Add,
-  CalendarMonth,
-  FilterList,
-  MoreVert,
-  Search,
-} from "@mui/icons-material";
+import { Add, FilterList, MoreVert } from "@mui/icons-material";
 
 import useAxios from "../../../hooks/useAxios";
 
@@ -42,7 +33,7 @@ import DeleteDialog from "../../../components/DeleteDialog";
 const PrescriptionList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [filters, setFilters] = useState({
-    // medicines: [],
+    medicines: [],
     patientId: undefined,
   });
   const [loading, setLoading] = useState(false);
@@ -66,7 +57,11 @@ const PrescriptionList = () => {
   const fetchRows = useCallback(async () => {
     try {
       setLoading(true);
-      const url = formatUrlQuery("/prescription/list", { ...filters, page });
+      const url = formatUrlQuery("/prescription/list", {
+        ...filters,
+        medicines: filters.medicines.join(","),
+        page,
+      });
 
       const { data } = await api.get(url);
 
@@ -115,7 +110,7 @@ const PrescriptionList = () => {
               }
             />
           </Grid>
-          {/* <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4}>
             <MedicineAutocomplete
               onChange={(medicines) =>
                 handleChangeFilter(
@@ -124,20 +119,7 @@ const PrescriptionList = () => {
                 )
               }
             />
-          </Grid> */}
-          {/* <Grid item xs={12} md={4}>
-            <TextField
-              placeholder="Buscar por data"
-              type="date"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CalendarMonth color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid> */}
+          </Grid>
         </Grid>
         {/* Action buttons */}
         <Grid item container xs={12} md={4}>
@@ -196,7 +178,10 @@ const PrescriptionList = () => {
                       {moment(row.createdAt).format("DD/MM/YYYY")}
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                      <IconButton
+                        id={row.id}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                      >
                         <MoreVert color="primary" />
                       </IconButton>
                     </TableCell>
@@ -214,13 +199,12 @@ const PrescriptionList = () => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <MenuItem>
-            <Text>Editar</Text>
-          </MenuItem>
-          <MenuItem>
-            <Text>Imprimir</Text>
-          </MenuItem>
-          <MenuItem>
+          <a href={`prescricao/ver/${anchorEl?.id}`} target="_blank" rel="noreferrer">
+            <MenuItem>
+              <Text>Imprimir</Text>
+            </MenuItem>
+          </a>
+          <MenuItem onClick={() => setOpenDelete(true)}>
             <Text color="error">Deletar</Text>
           </MenuItem>
         </Menu>
