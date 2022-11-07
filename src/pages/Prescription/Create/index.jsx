@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Grid } from "@mui/material";
 import {
   ArrowRightAlt,
+  Close,
   LocalPharmacy,
   Medication,
   Person,
@@ -19,9 +20,11 @@ import PharmacologicalTherapy from "../forms/PharmacologicalTherapy";
 import NonPharmacologicalTherapy from "../forms/NonPharmacologicalTherapy";
 import useAxios from "../../../hooks/useAxios";
 import { formatBody } from "../../../helpers/formatter";
+import PrescriptionPdfPreview from "../components/PrescriptionPdfPreview";
 
 const CreatePrescription = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [openPreview, setOpenPreview] = useState(false);
 
   const api = useAxios();
 
@@ -113,6 +116,11 @@ const CreatePrescription = () => {
   return (
     <PageLayout>
       <Container>
+        <Close onClick={() => setOpenPreview(true)} />
+        <PrescriptionPdfPreview
+          open={openPreview}
+          onClose={() => setOpenPreview(false)}
+        />
         <Stepper activeStep={activeStep} steps={steps} />
         <Formik
           initialValues={{

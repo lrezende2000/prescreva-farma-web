@@ -1,4 +1,5 @@
-import { Grid, TextField } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
+import { Button, Chip, Grid, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
 import UfSelect from "../../../components/UfSelect";
 
@@ -22,6 +23,24 @@ const ProfessionalDetails = () => {
 
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Button color="primary" component="label" startIcon={<PhotoCamera />}>
+          <input
+            onChange={(e) => setFieldValue("logo", e.target.files[0])}
+            hidden
+            accept="image/*"
+            type="file"
+          />
+          Insira sua logo
+        </Button>
+        {values.logo && (
+          <Chip
+            sx={{ marginLeft: 2 }}
+            label={values.logo.name}
+            onDelete={(e) => setFieldValue("logo", undefined)}
+          />
+        )}
+      </Grid>
       <Grid item xs={6} md={3}>
         <TextField
           label="CRF"

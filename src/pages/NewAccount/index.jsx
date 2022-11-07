@@ -127,18 +127,28 @@ const NewAccount = () => {
     complement: yup.string(),
     state: yup.string().required("Estado é obrigatório"),
     city: yup.string().required("Cidade é obrigatória"),
+    logo: yup.mixed().required("Logo é obrigatória"),
   });
 
   const handleSubmit = async (values) => {
-    const body = formatBody(values, {
+    const { logo, ...body } = formatBody(values, {
       numberFields: ["phone", "tel", "cep", "cpf"],
     });
 
+    const formData = new FormData();
+
+    formData.append("logo", logo);
+    formData.append("json", body);
+
+    console.log(body)
+
     try {
       setLoading(true);
-      await api.post("/signup", body);
+      await api.post("/signup", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      navigate("/entrar");
+      // navigate("/entrar");
     } catch {
     } finally {
       setLoading(false);
@@ -172,6 +182,7 @@ const NewAccount = () => {
                 complement: "",
                 state: "",
                 city: "",
+                logo: undefined,
               }}
               onSubmit={handleSubmit}
               validationSchema={validationSchema}
