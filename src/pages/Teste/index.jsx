@@ -15,7 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 
-import PageLayout from "../../../components/PageLayout";
+import PageLayout from "../../components/PageLayout";
 
 import {
   CalendarContainer,
@@ -32,9 +32,9 @@ import {
   AppointmentContainer,
 } from "./styles";
 
-import useAxios from "../../../hooks/useAxios";
-import { formatUrlQuery } from "../../../helpers/formatter";
-import PatientAutocomplete from "../../../components/PatientAutocomplete";
+import useAxios from "../../hooks/useAxios";
+import { formatUrlQuery } from "../../helpers/formatter";
+import PatientAutocomplete from "../../components/PatientAutocomplete";
 
 export const weekArray = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

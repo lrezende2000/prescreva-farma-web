@@ -18,6 +18,7 @@ import CreateForward from "../pages/Forward/Create";
 import UpdatePatient from "../pages/Patient/Update";
 import ViewPrescription from "../pages/Prescription/View";
 import ViewForward from "../pages/Forward/View";
+// import Teste from "../pages/Teste";
 
 const Router = () => {
   return (
@@ -42,6 +43,7 @@ const Router = () => {
             <Route path="encaminhamentos/novo" element={<CreateForward />} />
             <Route path="encaminhamentos/ver/:id" element={<ViewForward />} />
             <Route path="farmacos" element={<MedicineList />} />
+            {/* <Route path="teste" element={<Teste />} /> */}
           </Route>
         </Route>
       </Routes>

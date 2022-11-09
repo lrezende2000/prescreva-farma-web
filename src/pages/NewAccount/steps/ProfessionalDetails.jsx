@@ -32,7 +32,7 @@ const ProfessionalDetails = () => {
             accept="image/*"
             type="file"
           />
-          Insira sua identidade
+          Insira a identidade do seu estabelecimento
         </Button>
         {values.logo && (
           <Chip

@@ -25,7 +25,7 @@ export const formatUrlQuery = (baseUrl, query) => {
   let url = baseUrl;
 
   const values = Object.keys(query).reduce((prev, key) => {
-    if (query[key]) {
+    if (query[key] || typeof query[key] === "number") {
       return [...prev, [key, query[key]]];
     }
 

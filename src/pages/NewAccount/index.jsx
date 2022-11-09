@@ -48,7 +48,14 @@ const NewAccount = () => {
   const fieldsByStep = useMemo(
     () => ({
       0: ["name", "birthDate", "cpf", "nacionality", "gernder", "phone", "tel"],
-      1: ["crf", "crfState", "email", "password", "passwordConfirmation"],
+      1: [
+        "crf",
+        "crfState",
+        "email",
+        "password",
+        "passwordConfirmation",
+        "professionalPhone",
+      ],
       2: ["street", "cep", "number", "district", "complement", "state", "city"],
     }),
     []
@@ -94,7 +101,7 @@ const NewAccount = () => {
       .required("Gênero é obrigatório"),
     tel: yup
       .string()
-      .matches(/^\(\d{2}\)\d{4}-\d{4}$/, "Telefone no formato erradoo"),
+      .matches(/^\(\d{2}\)\d{4}-\d{4}$/, "Telefone no formato errado"),
     phone: yup
       .string()
       .matches(/^\(\d{2}\)\d{5}-\d{4}$/, "Celular no formato errado")
