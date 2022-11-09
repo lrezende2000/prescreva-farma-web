@@ -109,7 +109,7 @@ const CreatePrescription = () => {
     try {
       await api.post("/prescription/", formatBody(values));
 
-      navigate("/prescricao");
+      navigate("/prescricao", { state: { openAvaliation: true } });
     } catch {}
   };
 
@@ -120,8 +120,8 @@ const CreatePrescription = () => {
         <Formik
           initialValues={{
             patientId: searchParams.get("patientId")
-            ? parseInt(searchParams.get("patientId"))
-            : null,
+              ? parseInt(searchParams.get("patientId"))
+              : null,
             medicines: [],
             aditionalInfos: "",
             nonPharmacologicalTherapy: "",

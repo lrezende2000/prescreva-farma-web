@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -19,18 +20,20 @@ import {
 import { Add, FilterList, MoreVert } from "@mui/icons-material";
 
 import useAxios from "../../../hooks/useAxios";
+import { formatUrlQuery } from "../../../helpers/formatter";
 
 import PageLayout from "../../../components/PageLayout";
 import Text from "../../../components/Text";
 import MedicineAutocomplete from "../components/MedicineAutocomplete";
 import PatientAutocomplete from "../../../components/PatientAutocomplete";
+import DeleteDialog from "../../../components/DeleteDialog";
+import AvaliationModal from "../../../components/AvaliationModal";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
-import { formatUrlQuery } from "../../../helpers/formatter";
-import moment from "moment";
-import DeleteDialog from "../../../components/DeleteDialog";
 
 const PrescriptionList = () => {
+  const location = useLocation();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [filters, setFilters] = useState({
     medicines: [],
@@ -38,6 +41,9 @@ const PrescriptionList = () => {
   });
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openAvaliation, setOpenAvaliation] = useState(
+    location?.state?.openAvaliation || false
+  );
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
@@ -199,7 +205,11 @@ const PrescriptionList = () => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <a href={`prescricao/ver/${anchorEl?.id}`} target="_blank" rel="noreferrer">
+          <a
+            href={`prescricao/ver/${anchorEl?.id}`}
+            target="_blank"
+            rel="noreferrer"
+          >
             <MenuItem>
               <Text>Imprimir</Text>
             </MenuItem>
@@ -223,6 +233,10 @@ const PrescriptionList = () => {
           onChange={(_, value) => setPage(value)}
         />
       </Box>
+      <AvaliationModal
+        open={openAvaliation}
+        onClose={() => setOpenAvaliation(false)}
+      />
     </PageLayout>
   );
 };

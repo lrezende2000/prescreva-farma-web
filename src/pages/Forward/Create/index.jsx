@@ -65,7 +65,7 @@ const CreateForward = () => {
     try {
       await api.post("/forward/", formatBody(values));
 
-      navigate("/encaminhamentos");
+      navigate("/encaminhamentos", { state: { openAvaliation: true } });
     } catch {}
   };
 

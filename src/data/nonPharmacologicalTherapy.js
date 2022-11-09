@@ -1,4 +1,4 @@
-export const nonPhacologicalTherapy = [
+export const nonPharmacologicalTherapy = [
   "Ingerir líquidos – água, suco, chás, caldos e sopas",
   "Evitar ou diminuir a exposição ao fumo ",
   "Evitar a ingestão excessiva de bebidas alcoólicas e cafeinadas.",

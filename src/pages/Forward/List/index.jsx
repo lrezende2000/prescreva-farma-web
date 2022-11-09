@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -17,13 +17,7 @@ import {
   TableHead,
   TextField,
 } from "@mui/material";
-import {
-  Add,
-  CalendarMonth,
-  FilterList,
-  MoreVert,
-  Search,
-} from "@mui/icons-material";
+import { Add, CalendarMonth, FilterList, MoreVert } from "@mui/icons-material";
 
 import useAxios from "../../../hooks/useAxios";
 
@@ -35,8 +29,11 @@ import { formatUrlQuery } from "../../../helpers/formatter";
 import moment from "moment";
 import DeleteDialog from "../../../components/DeleteDialog";
 import PatientAutocomplete from "../../../components/PatientAutocomplete";
+import AvaliationModal from "../../../components/AvaliationModal";
 
 const ForwardList = () => {
+  const location = useLocation();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [filters, setFilters] = useState({
     patientId: undefined,
@@ -44,6 +41,9 @@ const ForwardList = () => {
   });
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openAvaliation, setOpenAvaliation] = useState(
+    location?.state?.openAvaliation || false
+  );
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
@@ -229,6 +229,10 @@ const ForwardList = () => {
           onChange={(_, value) => setPage(value)}
         />
       </Box>
+      <AvaliationModal
+        open={openAvaliation}
+        onClose={() => setOpenAvaliation(false)}
+      />
     </PageLayout>
   );
 };

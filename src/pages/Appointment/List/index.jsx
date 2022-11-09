@@ -10,6 +10,7 @@ import {
   Grid,
   InputAdornment,
   InputLabel,
+  Menu,
   MenuItem,
   Select,
   TextField,
@@ -35,18 +36,12 @@ import {
 import useAxios from "../../../hooks/useAxios";
 import { formatUrlQuery } from "../../../helpers/formatter";
 import PatientAutocomplete from "../../../components/PatientAutocomplete";
+import DeleteDialog from "../../../components/DeleteDialog";
+import Text from "../../../components/Text";
 
 export const weekArray = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export const weekArrayPt = [
-  "Domingo",
-  "Segunda",
-  "Terça",
-  "Quarta",
-  "Quinta",
-  "Sexta",
-  "Sábado",
-];
+export const weekArrayPt = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 export const gridArray = _.range(0, 42);
 
@@ -84,6 +79,7 @@ const monthLabels = [
 
 const AppointmentList = () => {
   const [loading, setLoading] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [filters, setFilters] = useState({
     month: parseInt(moment().format("MM")) - 1,
     year: parseInt(moment().format("YYYY")),
@@ -91,6 +87,9 @@ const AppointmentList = () => {
     patientId: null,
   });
   const [calendar, setCalendar] = useState({});
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const open = !!anchorEl;
 
   const api = useAxios();
 
@@ -123,6 +122,17 @@ const AppointmentList = () => {
   const monthSize = parseInt(
     moment().year(filters.year).month(filters.month).endOf("month").format("DD")
   );
+
+  const handleDeleteAppointment = async () => {
+    try {
+      await api.delete(`/appointment/${anchorEl?.id}`);
+
+      setOpenDelete(false);
+      setAnchorEl(null);
+
+      fetchRows();
+    } catch {}
+  };
 
   const startIndex = weekArray.indexOf(startOfDay);
   const endIndex = startIndex + monthSize;
@@ -258,7 +268,11 @@ const AppointmentList = () => {
                     <DateApointmentContainer>
                       {dayKey in calendar &&
                         calendar[dayKey].map((appointment) => (
-                          <AppointmentContainer key={appointment.id}>
+                          <AppointmentContainer
+                            id={appointment.id}
+                            key={appointment.id}
+                            onClick={(e) => setAnchorEl(e.currentTarget)}
+                          >
                             {appointment?.patient?.name} às{" "}
                             {moment.utc(appointment.start).format("HH:mm")} -{" "}
                             {moment.utc(appointment.end).format("HH:mm")}
@@ -274,6 +288,23 @@ const AppointmentList = () => {
           </CalenderDateContainer>
         </CalendarContainerBody>
       </CalendarContainer>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        transformOrigin={{ horizontal: "center", vertical: "top" }}
+        anchorOrigin={{ horizontal: "center", vertical: "top" }}
+      >
+        <MenuItem onClick={() => setOpenDelete(true)}>
+          <Text color="error">Deletar</Text>
+        </MenuItem>
+      </Menu>
+      <DeleteDialog
+        title="Tem certeza que deseja remover a consulta?"
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
+        onConfirmDelete={handleDeleteAppointment}
+      />
     </PageLayout>
   );
 };

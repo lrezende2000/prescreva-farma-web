@@ -154,6 +154,8 @@ export const AppointmentContainer = styled.div`
   /* height: 25px; */
   margin-bottom: 3px;
 
+  cursor: pointer;
+
   & + & {
     border-top: 1px solid ${({ theme }) => theme.colors.black};
   }
