@@ -6,7 +6,11 @@ export const formatBody = (body, rules = {}) => {
 
   if (rules.numberFields) {
     const numberFields = rules.numberFields.reduce((prev, curr) => {
-      return { ...prev, [curr]: unmaskNumber(formattedBody[curr]) };
+      if (formattedBody[curr]) {
+        return { ...prev, [curr]: unmaskNumber(formattedBody[curr]) };
+      }
+
+      return { ...prev };
     }, {});
 
     formattedBody = { ...formattedBody, ...numberFields };

@@ -16,6 +16,8 @@ import {
   LogoWrapper,
   StyledLink,
 } from "./styles";
+import PasswordInput from "../../components/PasswordInput";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -43,8 +45,10 @@ const Login = () => {
 
       updateUser(data.user);
 
-      navigate(location.state?.from?.pathname || "/home", { replace: true });
+      toast.success(data.message);
+      navigate(location.state?.from?.pathname || "/inicio", { replace: true });
     } catch (err) {
+      toast.error(err.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -57,9 +61,20 @@ const Login = () => {
           onSubmit={handleToggleSubmit}
           validationSchema={validationSchema}
         >
-          {({ values, setFieldValue, handleSubmit, errors }) => (
+          {({
+            values,
+            setFieldValue,
+            handleSubmit,
+            errors,
+            touched,
+            setFieldTouched,
+          }) => (
             <LoginForm>
-              <img src="/assets/logo/blue.png" alt="Prescreva Farma Logo" height={150} />
+              <img
+                src="/assets/logo/blue.png"
+                alt="Prescreva Farma Logo"
+                height={150}
+              />
               <Text variant="large" color="primary_blue">
                 PrescrevaFarma
               </Text>
@@ -69,25 +84,28 @@ const Login = () => {
               <TextField
                 fullWidth
                 size="small"
-                error={!!errors.login}
-                helperText={errors.login}
+                error={touched.login && !!errors.login}
+                helperText={touched.login && errors.login}
                 label="E-mail"
                 placeholder="Informe o seu e-mail"
                 variant="outlined"
                 value={values.login}
                 onChange={(e) => setFieldValue("login", e.target.value)}
+                onFocus={() => setFieldTouched("login", true)}
               />
-              <TextField
-                fullWidth
-                size="small"
+              <PasswordInput
                 label="Senha"
-                placeholder="Informe sua senha"
-                variant="outlined"
-                type="password"
-                error={!!errors.password}
-                helperText={errors.password}
                 value={values.password}
-                onChange={(e) => setFieldValue("password", e.target.value)}
+                isError={touched.password && !!errors.password}
+                error={touched.password && errors.password}
+                onChange={(value) => setFieldValue("password", value)}
+                onFocus={() => setFieldTouched("password", true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmit();
+                  }
+                }}
+                placeholder="Informe sua senha"
               />
               <Text fontWeight={700}>
                 <StyledLink to="/esqueci-senha">Esqueci minha senha</StyledLink>

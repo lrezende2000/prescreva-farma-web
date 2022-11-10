@@ -1,4 +1,4 @@
-import { menuLinks } from "../../components/Header";
+import { userLinks } from "../../components/Header";
 import PageLayout from "../../components/PageLayout";
 import Text from "../../components/Text";
 import Item from "./components/Item";
@@ -12,7 +12,7 @@ const Home = () => {
         Geral
       </Text>
       <ItemContainer>
-        {menuLinks.map(
+        {userLinks.map(
           (menuLink) =>
             menuLink.icon && (
               <Item

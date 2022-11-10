@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Grid, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
+import { Grid, TextField } from "@mui/material";
 
-import { maskCep, unmaskNumber } from "../../../helpers/mask";
-import { cepApi } from "../../../services/cep";
-import UfSelect from "../../../components/UfSelect";
+import { maskCep, unmaskNumber } from "../../../../../helpers/mask";
+import { cepApi } from "../../../../../services/cep";
+
+import UfSelect from "../../../../../components/UfSelect";
 
 const ProfessionalAddress = () => {
   const [disableFields, setDisableFields] = useState(true);
@@ -46,7 +47,7 @@ const ProfessionalAddress = () => {
     if (values.cep?.length >= 9) {
       handleGetCep(values.cep);
     } else {
-      setFieldValue("state", "");
+      setFieldValue("state", null);
       setFieldValue("city", "");
       setFieldValue("street", "");
       setFieldValue("district", "");
@@ -54,7 +55,7 @@ const ProfessionalAddress = () => {
   }, [values.cep]);
 
   return (
-    <Grid container spacing={2}>
+    <Grid item container spacing={2}>
       <Grid item xs={12} md={6}>
         <TextField
           label="CEP"

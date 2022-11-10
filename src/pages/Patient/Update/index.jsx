@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+import { toast } from "react-toastify";
+import { Box, CircularProgress } from "@mui/material";
 
 import useAxios from "../../../hooks/useAxios";
 import { formatBody } from "../../../helpers/formatter";
+import { maskCpf, maskPhone, maskTel } from "../../../helpers/mask";
 
 import PageLayout from "../../../components/PageLayout";
 import PatientForm from "../components/PatientForm";
 
 import { Container } from "./styles";
-import { Box, CircularProgress } from "@mui/material";
-import { maskCpf, maskPhone, maskTel } from "../../../helpers/mask";
 
 const UpdatePatient = () => {
   const [laoding, setLoading] = useState(true);
@@ -24,13 +25,16 @@ const UpdatePatient = () => {
 
   const handleToggleSubmit = async (values) => {
     try {
-      await api.put(
+      const { data } = await api.put(
         `/patient/${id}`,
         formatBody(values, { numberFields: ["tel", "phone", "cpf"] })
       );
 
+      toast.success(data.message);
       navigate("/pacientes");
-    } catch {}
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   useEffect(() => {

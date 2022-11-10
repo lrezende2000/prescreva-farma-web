@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useFormikContext } from "formik";
 import {
   FormControl,
   FormHelperText,
@@ -8,8 +9,8 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useFormikContext } from "formik";
-import { maskCpf, maskPhone, maskTel } from "../../../helpers/mask";
+
+import { maskCpf, maskPhone, maskTel } from "../../../../../helpers/mask";
 
 const PersonalDetails = () => {
   const { values, setFieldValue, touched, setFieldTouched, errors } =

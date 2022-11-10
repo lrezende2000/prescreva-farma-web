@@ -1,8 +1,10 @@
-import { PhotoCamera } from "@mui/icons-material";
-import { Button, Chip, Grid, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
-import UfSelect from "../../../components/UfSelect";
-import { maskPhone, maskTel } from "../../../helpers/mask";
+import { Button, Chip, Grid, TextField } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
+
+import { maskPhone, maskTel } from "../../../../../helpers/mask";
+
+import UfSelect from "../../../../../components/UfSelect";
 
 const ProfessionalDetails = () => {
   const { values, setFieldValue, touched, setFieldTouched, errors } =

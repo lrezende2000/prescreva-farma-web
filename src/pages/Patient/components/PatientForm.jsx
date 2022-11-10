@@ -1,6 +1,7 @@
 import { memo, useMemo } from "react";
 import * as yup from "yup";
 import { Formik } from "formik";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -14,9 +15,9 @@ import {
 import { Person } from "@mui/icons-material";
 
 import { maskCpf, maskPhone, maskTel } from "../../../helpers/mask";
+import { validateCpf } from "../../../helpers/validate";
 
 import Stepper from "../../../components/Stepper";
-import { useNavigate } from "react-router-dom";
 
 const PatientForm = ({ handleToggleSubmit, initialValues }) => {
   const navigate = useNavigate();
@@ -39,9 +40,7 @@ const PatientForm = ({ handleToggleSubmit, initialValues }) => {
   );
 
   const validationSchema = yup.object().shape({
-    email: yup
-      .string()
-      .email("Email no formato errado"),
+    email: yup.string().email("Email no formato errado"),
     name: yup
       .string()
       .max(100, "Nome precisa ter menos de 100 caracteres")
@@ -68,6 +67,11 @@ const PatientForm = ({ handleToggleSubmit, initialValues }) => {
     cpf: yup
       .string()
       .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF no formato errado")
+      .test({
+        name: "is-valid-cpf",
+        message: "CPF inválido",
+        test: (value) => validateCpf(value),
+      })
       .required("CPF é obrigatório"),
   });
 

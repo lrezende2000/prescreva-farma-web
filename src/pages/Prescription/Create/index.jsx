@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import * as yup from "yup";
+import { Formik } from "formik";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button, Grid } from "@mui/material";
 import {
   ArrowRightAlt,
@@ -8,17 +10,17 @@ import {
   Medication,
   Person,
 } from "@mui/icons-material";
-import { Formik } from "formik";
+
+import useAxios from "../../../hooks/useAxios";
+import { formatBody } from "../../../helpers/formatter";
 
 import PageLayout from "../../../components/PageLayout";
 import Stepper from "../../../components/Stepper";
-
-import { Container } from "./styles";
 import PatientForm from "../components/forms/PatientForm";
 import PharmacologicalTherapy from "../components/forms/PharmacologicalTherapy";
 import NonPharmacologicalTherapy from "../components/forms/NonPharmacologicalTherapy";
-import useAxios from "../../../hooks/useAxios";
-import { formatBody } from "../../../helpers/formatter";
+
+import { Container } from "./styles";
 
 const CreatePrescription = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -107,10 +109,13 @@ const CreatePrescription = () => {
 
   const handleToggleSubmit = async (values) => {
     try {
-      await api.post("/prescription/", formatBody(values));
+      const { data } = await api.post("/prescription/", formatBody(values));
 
+      toast.success(data.message);
       navigate("/prescricao", { state: { openAvaliation: true } });
-    } catch {}
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   return (

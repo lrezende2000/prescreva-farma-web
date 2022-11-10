@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -7,8 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useFormikContext } from "formik";
-import PatientAutocomplete from "../../../components/PatientAutocomplete";
-import { medicalExperience } from "../../../data/medicalExperience";
+import PatientAutocomplete from "../../../../components/PatientAutocomplete";
 
 const ForwardForm = () => {
   const { values, setFieldValue, setFieldTouched, touched, errors } =
@@ -25,22 +23,13 @@ const ForwardForm = () => {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <Autocomplete
-          options={medicalExperience}
-          value={values.medicalExperience || null}
-          onChange={(_, experience) =>
-            setFieldValue("medicalExperience", experience)
-          }
-          isOptionEqualToValue={(option, value) => option === value}
+        <TextField
+          label="Especialidade"
+          value={values.medicalExperience}
+          onChange={(e) => setFieldValue("medicalExperience", e.target.value)}
           onFocus={() => setFieldTouched("medicalExperience", true)}
-          renderInput={(props) => (
-            <TextField
-              {...props}
-              error={touched.medicalExperience && !!errors.medicalExperience}
-              helperText={touched.medicalExperience && errors.medicalExperience}
-              label="Especialidade"
-            />
-          )}
+          error={touched.medicalExperience && !!errors.medicalExperience}
+          helperText={touched.medicalExperience && errors.medicalExperience}
         />
       </Grid>
       <Grid item xs={12}>

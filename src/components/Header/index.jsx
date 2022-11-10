@@ -20,7 +20,7 @@ import {
 } from "@mui/icons-material";
 
 import { theme } from "../../global/theme";
-import { AuthContext } from "../../context/auth";
+import useAuth from "../../hooks/useAuth";
 
 import Text from "../Text";
 
@@ -35,13 +35,18 @@ import {
   NavItem,
 } from "./styles";
 
-export const menuLinks = [
-  { link: "/home", label: "Home" },
+export const userLinks = [
+  { link: "/inicio", label: "Início" },
   { link: "/pacientes", label: "Pacientes", icon: FolderShared },
   { link: "/consultas", label: "Consultas", icon: CalendarMonth },
   { link: "/prescricao", label: "Prescrições", icon: Assignment },
   { link: "/encaminhamentos", label: "Encaminhamentos", icon: Reply },
   { link: "/farmacos", label: "Fármacos", icon: Medication },
+];
+
+const adminLinks = [
+  { link: "/usuario", label: "Usuário" },
+  { link: "/avaliacao", label: "Avaliações" },
 ];
 
 const LoggedHeader = () => {
@@ -52,7 +57,9 @@ const LoggedHeader = () => {
 
   const navigate = useNavigate();
 
-  const { user, handleLogout } = useContext(AuthContext);
+  const { user, handleLogout } = useAuth();
+
+  const menuLinks = user?.isAdmin ? adminLinks : userLinks;
 
   const openAccount = Boolean(accountAnchor);
   const openMenu = Boolean(menuAnchor);
@@ -85,7 +92,7 @@ const LoggedHeader = () => {
         <img
           src="/assets/logo/white.png"
           alt="Prescreva Farma logo"
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/inicio")}
         />
         <UserInfo>
           <Box
@@ -149,13 +156,17 @@ const LoggedHeader = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem>
-          <ListItemIcon>
-            <Person fontSize="small" />
-          </ListItemIcon>
-          Minha conta
-        </MenuItem>
-        <Divider />
+        {!user?.isAdmin && (
+          <>
+            <MenuItem onClick={() => navigate("/minha-conta")}>
+              <ListItemIcon>
+                <Person fontSize="small" />
+              </ListItemIcon>
+              Minha conta
+            </MenuItem>
+            <Divider />
+          </>
+        )}
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" color="error" />
@@ -224,7 +235,7 @@ const UnloggedHeader = () => {
 };
 
 export const Header = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   return <Container>{user ? <LoggedHeader /> : <UnloggedHeader />}</Container>;
 };

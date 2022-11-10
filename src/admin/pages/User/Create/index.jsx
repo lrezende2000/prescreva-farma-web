@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { Button } from "@mui/material";
+import { toast } from "react-toastify";
 import {
   Person,
   AddLocation,
@@ -10,14 +11,15 @@ import {
   ArrowRightAlt,
 } from "@mui/icons-material";
 
-import useAxios from "../../hooks/useAxios";
-import { formatBody } from "../../helpers/formatter";
+import useAxios from "../../../../hooks/useAxios";
+import { formatBody } from "../../../../helpers/formatter";
+import { validateCpf } from "../../../../helpers/validate";
 
-import PageLayout from "../../components/PageLayout";
-import Stepper from "../../components/Stepper";
-import PersonalDetails from "./steps/PersonalDetails";
-import ProfessionalDetails from "./steps/ProfessionalDetails";
-import ProfessionalAddress from "./steps/ProfessionalAddress";
+import PageLayout from "../../../../components/PageLayout";
+import Stepper from "../../../../components/Stepper";
+import PersonalDetails from "../components/forms/PersonalDetails";
+import ProfessionalDetails from "../components/forms/ProfessionalDetails";
+import ProfessionalAddress from "../components/forms/ProfessionalAddress";
 
 import {
   ButtonsContainer,
@@ -93,6 +95,11 @@ const NewAccount = () => {
     cpf: yup
       .string()
       .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF no formato errado")
+      .test({
+        name: "is-valid-cpf",
+        message: "CPF inválido",
+        test: (value) => validateCpf(value),
+      })
       .required("CPF é obrigatório"),
     nacionality: yup.string().required("Nacionalidade é obrigatório"),
     gender: yup
@@ -156,12 +163,14 @@ const NewAccount = () => {
 
     try {
       setLoading(true);
-      await api.post("/signup", formData, {
+      const { data } = await api.post("/user", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      toast.success(data.message);
       navigate("/entrar");
-    } catch {
+    } catch (err) {
+      toast.error(err.response.data.message);
     } finally {
       setLoading(false);
     }

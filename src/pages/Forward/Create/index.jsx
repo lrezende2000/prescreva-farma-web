@@ -7,11 +7,12 @@ import { ArrowRightAlt, Reply } from "@mui/icons-material";
 
 import PageLayout from "../../../components/PageLayout";
 import Stepper from "../../../components/Stepper";
-import ForwardForm from "../forms/ForwardForm";
+import ForwardForm from "../components/forms/ForwardForm";
 
 import { Container } from "./styles";
 import { formatBody } from "../../../helpers/formatter";
 import useAxios from "../../../hooks/useAxios";
+import { toast } from "react-toastify";
 
 const CreateForward = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -63,10 +64,13 @@ const CreateForward = () => {
 
   const handleToggleSubmit = async (values) => {
     try {
-      await api.post("/forward/", formatBody(values));
+      const { data } = await api.post("/forward/", formatBody(values));
 
+      toast.success(data.message);
       navigate("/encaminhamentos", { state: { openAvaliation: true } });
-    } catch {}
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   return (

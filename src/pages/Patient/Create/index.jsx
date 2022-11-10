@@ -7,6 +7,7 @@ import PageLayout from "../../../components/PageLayout";
 import PatientForm from "../components/PatientForm";
 
 import { Container } from "./styles";
+import { toast } from "react-toastify";
 
 const initialValues = {
   name: "",
@@ -26,13 +27,16 @@ const CreatePatient = () => {
 
   const handleToggleSubmit = async (values) => {
     try {
-      await api.post(
+      const { data } = await api.post(
         "/patient/",
         formatBody(values, { numberFields: ["tel", "phone", "cpf"] })
       );
 
+      toast.success(data.message);
       navigate("/pacientes");
-    } catch {}
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   return (

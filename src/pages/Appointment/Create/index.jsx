@@ -13,6 +13,7 @@ import { Formik } from "formik";
 import { useMemo } from "react";
 import useAxios from "../../../hooks/useAxios";
 import { formatBody } from "../../../helpers/formatter";
+import { toast } from "react-toastify";
 
 const CreateAppointment = () => {
   const navigate = useNavigate();
@@ -72,10 +73,13 @@ const CreateAppointment = () => {
 
       delete body.date;
 
-      await api.post("/appointment/", formatBody(body));
+      const { data } = await api.post("/appointment/", formatBody(body));
 
+      toast.success(data.message);
       navigate("/consultas");
-    } catch (err) {}
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   return (
