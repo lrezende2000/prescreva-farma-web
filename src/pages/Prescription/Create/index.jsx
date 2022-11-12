@@ -9,6 +9,7 @@ import {
   LocalPharmacy,
   Medication,
   Person,
+  Preview,
 } from "@mui/icons-material";
 
 import useAxios from "../../../hooks/useAxios";
@@ -19,6 +20,7 @@ import Stepper from "../../../components/Stepper";
 import PatientForm from "../components/forms/PatientForm";
 import PharmacologicalTherapy from "../components/forms/PharmacologicalTherapy";
 import NonPharmacologicalTherapy from "../components/forms/NonPharmacologicalTherapy";
+import PreviewPrescription from "../components/PreviewPrescription";
 
 import { Container } from "./styles";
 
@@ -43,6 +45,10 @@ const CreatePrescription = () => {
         label: "Terapia não Farmacológica",
         icon: <LocalPharmacy />,
       },
+      {
+        label: "Pré-visualizar",
+        icon: <Preview />,
+      },
     ],
     []
   );
@@ -52,6 +58,7 @@ const CreatePrescription = () => {
       0: ["patientId"],
       1: ["medicines", "aditionalInfos"],
       2: ["nonPharmacologicalTherapy"],
+      3: [""],
     }),
     []
   );
@@ -135,7 +142,7 @@ const CreatePrescription = () => {
           onSubmit={handleToggleSubmit}
           validateOnMount
         >
-          {({ handleSubmit, errors, isSubmitting }) => {
+          {({ handleSubmit, errors, isSubmitting, values }) => {
             const hasError = fieldsByStep[activeStep]
               .map((field) => !!errors[field])
               .some((error) => error);
@@ -145,6 +152,7 @@ const CreatePrescription = () => {
                 {activeStep === 0 && <PatientForm />}
                 {activeStep === 1 && <PharmacologicalTherapy />}
                 {activeStep === 2 && <NonPharmacologicalTherapy />}
+                {activeStep === 3 && <PreviewPrescription values={values} />}
                 <Grid
                   item
                   xs={12}

@@ -6,11 +6,7 @@ import { toast } from "react-toastify";
 import {
   Box,
   Button,
-  IconButton,
-  InputAdornment,
-  TextField,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { api } from "../../services/api";
 
@@ -65,7 +61,7 @@ const ResetPassword = () => {
     if (!token) {
       navigate("/entrar");
     }
-  }, []);
+  }, [token]);
 
   return (
     <Container>

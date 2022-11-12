@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import moment from "moment";
+import { toast } from "react-toastify";
 import {
-  Page,
-  Text,
-  View,
-  Image,
-  Document,
-  StyleSheet,
   PDFViewer,
+  Document,
+  Page,
+  View,
+  Text,
+  Image,
+  StyleSheet,
 } from "@react-pdf/renderer";
-import { Box, CircularProgress } from "@mui/material";
+import moment from "moment";
 
 import useAxios from "../../../hooks/useAxios";
+import { formatUrlQuery } from "../../../helpers/formatter";
 import { maskPhone, maskTel } from "../../../helpers/mask";
 
 const styles = StyleSheet.create({
@@ -38,66 +38,50 @@ const styles = StyleSheet.create({
   },
 });
 
-const ViewForward = () => {
+const PreviewForward = ({ values }) => {
   const [loading, setLoading] = useState(true);
-  const [forward, setForward] = useState();
+  const [previewData, setPreviewData] = useState();
 
   const api = useAxios();
 
-  const navigate = useNavigate();
-
-  const { id } = useParams();
-
   useEffect(() => {
-    if (!id) {
-      navigate("/encaminhamentos");
-    }
-
     api
-      .get(`/forward/${id}`)
-      .then(({ data }) => {
-        if (!data.forward) {
-          navigate("/encaminhamentos");
-        }
-
-        setForward(data.forward);
-      })
-      .catch(() => navigate("/encaminhamentos"))
-      .finally(setLoading(false));
+      .get(
+        formatUrlQuery("/forward/preview", {
+          patientId: values.patientId,
+        })
+      )
+      .then(({ data }) => setPreviewData(data))
+      .catch((err) => toast.error(err.response.data.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <Box display="flex" alignItems="center" justifyContent="center">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <PDFViewer style={{ width: "100%", height: "100%" }}>
+    <PDFViewer style={{ width: "100%", height: "100%", minHeight: "70vh" }}>
       <Document>
         <Page size="A4" style={styles.page}>
           <View style={{ position: "relative", zIndex: 999 }}>
             <View style={styles.header}>
-              {forward?.professional?.logo && (
+              {previewData?.professional?.logo && (
                 <Image
                   style={{ maxWidth: "200px", maxHeight: "100px" }}
-                  src={`${process.env.REACT_APP_API_URL}/public/logos/${forward?.professional?.logo}`}
+                  src={`${process.env.REACT_APP_API_URL}/public/logos/${previewData?.professional?.logo}`}
                   alt="Logo marca do profissional"
                 />
               )}
               <View style={styles.column}>
                 <Text style={styles.text}>
-                  {forward?.professional.street}, {forward?.professional.number}{" "}
-                  - {forward?.professional.district},{" "}
-                  {forward?.professional.city} - {forward?.professional.state}
+                  {previewData?.professional.street},{" "}
+                  {previewData?.professional.number} -{" "}
+                  {previewData?.professional.district},{" "}
+                  {previewData?.professional.city} -{" "}
+                  {previewData?.professional.state}
                 </Text>
-                {forward?.professional.professionalPhone && (
+                {previewData?.professional.professionalPhone && (
                   <Text style={styles.text}>
-                    {forward?.professional.professionalPhone.length === 10
-                      ? maskTel(forward?.professional.professionalPhone)
-                      : maskPhone(forward?.professional.professionalPhone)}
+                    {previewData?.professional.professionalPhone.length === 10
+                      ? maskTel(previewData?.professional.professionalPhone)
+                      : maskPhone(previewData?.professional.professionalPhone)}
                   </Text>
                 )}
               </View>
@@ -108,7 +92,8 @@ const ViewForward = () => {
             >
               <View>
                 <Text style={styles.text}>
-                  {forward?.patient.name} - {maskPhone(forward?.patient.phone)}
+                  {previewData?.patient.name} -{" "}
+                  {maskPhone(previewData?.patient.phone)}
                 </Text>
               </View>
 
@@ -123,16 +108,16 @@ const ViewForward = () => {
                   ENCAMINHAMENTO
                 </Text>
                 <Text style={[styles.text, { marginTop: 20 }]}>
-                  Ao {forward?.medicalExperience}
+                  Ao {values?.medicalExperience}
                 </Text>
                 <Text style={[styles.text, { marginTop: 20 }]}>
                   Prezado Dr(a).:
                 </Text>
                 <Text style={[styles.text, { marginTop: 20 }]}>
-                  {forward?.forwardReason}
+                  {values?.forwardReason}
                 </Text>
                 <Text style={[styles.text, { marginTop: 20 }]}>
-                  {forward?.showFooter &&
+                  {values?.showFooter &&
                     "À disposição para qualquer esclarecimento."}
                 </Text>
                 <Text style={[styles.text, { marginTop: 20 }]}>
@@ -151,15 +136,16 @@ const ViewForward = () => {
                 <View style={{ display: "flex", alignItems: "center" }}>
                   <View style={{ borderTop: "1px solid #000", width: 150 }} />
                   <Text style={[styles.text, { margin: "5px 0" }]}>
-                    {forward?.professional.name}
+                    {previewData?.professional.name}
                   </Text>
                   <Text style={styles.text}>
-                    CRF/{forward?.professional.crfState} -{" "}
-                    {forward?.professional.crf}
+                    CRF/{previewData?.professional.crfState} -{" "}
+                    {previewData?.professional.crf}
                   </Text>
                   <Text style={[styles.text, { marginTop: 20 }]}>
-                    {forward?.professional.city} - {forward?.professional.state}
-                    , {moment(forward?.createdAt).format("DD/MM/YYYY")}
+                    {previewData?.professional.city} -{" "}
+                    {previewData?.professional.state},{" "}
+                    {moment().format("DD/MM/YYYY")}
                   </Text>
                 </View>
               </View>
@@ -195,4 +181,4 @@ const ViewForward = () => {
   );
 };
 
-export default ViewForward;
+export default PreviewForward;

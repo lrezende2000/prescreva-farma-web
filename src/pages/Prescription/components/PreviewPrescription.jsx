@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import moment from "moment";
 import {
+  PDFViewer,
+  Document,
   Page,
-  Text,
   View,
   Image,
-  Document,
+  Text,
   StyleSheet,
-  PDFViewer,
 } from "@react-pdf/renderer";
-import { Box, CircularProgress } from "@mui/material";
-
-import useAxios from "../../../hooks/useAxios";
+import moment from "moment";
+import { useEffect } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { formatUrlQuery } from "../../../helpers/formatter";
 import { maskPhone, maskTel } from "../../../helpers/mask";
+import useAxios from "../../../hooks/useAxios";
 
 const styles = StyleSheet.create({
   page: {
@@ -38,68 +38,51 @@ const styles = StyleSheet.create({
   },
 });
 
-const ViewPrescription = () => {
+const PreviewPrescription = ({ values }) => {
   const [loading, setLoading] = useState(true);
-  const [prescription, setPrescription] = useState();
+  const [previewData, setPreviewData] = useState();
 
   const api = useAxios();
 
-  const navigate = useNavigate();
-
-  const { id } = useParams();
-
   useEffect(() => {
-    if (!id) {
-      navigate("/prescricao");
-    }
-
     api
-      .get(`/prescription/${id}`)
-      .then(({ data }) => {
-        if (!data.prescription) {
-          navigate("/prescricao");
-        }
-
-        setPrescription(data.prescription);
-      })
-      .catch(() => navigate("/prescricao"))
-      .finally(setLoading(false));
+      .get(
+        formatUrlQuery("/prescription/preview", {
+          patientId: values.patientId,
+          medicines: values.medicines.map((m) => m.medicineId).join(","),
+        })
+      )
+      .then(({ data }) => setPreviewData(data))
+      .catch((err) => toast.error(err.response.data.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <Box display="flex" alignItems="center" justifyContent="center">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <PDFViewer style={{ width: "100%", height: "100%" }}>
+    <PDFViewer style={{ width: "100%", height: "100%", minHeight: "70vh" }}>
       <Document>
         <Page size="A4" style={styles.page}>
           <View style={{ position: "relative", zIndex: 999 }}>
             <View style={styles.header}>
-              {prescription?.professional?.logo && (
+              {previewData?.professional?.logo && (
                 <Image
                   style={{ maxWidth: "200px", maxHeight: "100px" }}
-                  src={`${process.env.REACT_APP_API_URL}/public/logos/${prescription?.professional?.logo}`}
+                  src={`${process.env.REACT_APP_API_URL}/public/logos/${previewData?.professional?.logo}`}
                   alt="Logo marca do profissional"
                 />
               )}
               <View style={styles.column}>
                 <Text style={styles.text}>
-                  {prescription?.professional.street},{" "}
-                  {prescription?.professional.number} -{" "}
-                  {prescription?.professional.district},{" "}
-                  {prescription?.professional.city} -{" "}
-                  {prescription?.professional.state}
+                  {previewData?.professional.street},{" "}
+                  {previewData?.professional.number} -{" "}
+                  {previewData?.professional.district},{" "}
+                  {previewData?.professional.city} -{" "}
+                  {previewData?.professional.state}
                 </Text>
-                {prescription?.professional.professionalPhone && (
+                {previewData?.professional.professionalPhone && (
                   <Text style={styles.text}>
-                    {prescription?.professional.professionalPhone.length === 10
-                      ? maskTel(prescription?.professional.professionalPhone)
-                      : maskPhone(prescription?.professional.professionalPhone)}
+                    {previewData?.professional.professionalPhone.length === 10
+                      ? maskTel(previewData?.professional.professionalPhone)
+                      : maskPhone(previewData?.professional.professionalPhone)}
                   </Text>
                 )}
               </View>
@@ -110,11 +93,11 @@ const ViewPrescription = () => {
             >
               <View>
                 <Text style={styles.text}>
-                  {prescription?.patient.name} -{" "}
-                  {maskPhone(prescription?.patient.phone)}
+                  {previewData?.patient?.name} -{" "}
+                  {maskPhone(previewData?.patient?.phone)}
                 </Text>
               </View>
-              {!!prescription?.prescriptionMedicines.filter(
+              {!!values?.medicines.filter(
                 (prescriptionMedicine) =>
                   prescriptionMedicine.administrationForm === "Uso Interno"
               ).length && (
@@ -129,7 +112,7 @@ const ViewPrescription = () => {
                   >
                     USO INTERNO
                   </Text>
-                  {prescription?.prescriptionMedicines
+                  {values?.medicines
                     .filter(
                       (prescriptionMedicine) =>
                         prescriptionMedicine.administrationForm ===
@@ -137,7 +120,7 @@ const ViewPrescription = () => {
                     )
                     .map((prescriptionMedicine, index) => (
                       <View
-                        key={prescriptionMedicine.medicine.name}
+                        key={prescriptionMedicine.medicineName}
                         style={{ marginLeft: 20, marginTop: 10 }}
                       >
                         <View
@@ -149,7 +132,7 @@ const ViewPrescription = () => {
                           }}
                         >
                           <Text style={{ maxWidth: 200, fontSize: 10 }}>
-                            {index + 1}) {prescriptionMedicine.medicine.name}{" "}
+                            {index + 1}) {prescriptionMedicine.medicineName}{" "}
                             {prescriptionMedicine.concentration}
                           </Text>
                           <View
@@ -160,8 +143,13 @@ const ViewPrescription = () => {
                             }}
                           />
                           <Text style={{ maxWidth: 200, fontSize: 10 }}>
-                            {prescriptionMedicine.medicine.pharmaceuticalForm}
+                            {previewData.medicines.find(
+                              (m) => m.id === prescriptionMedicine.medicineId
+                            )?.pharmaceuticalForm || ""}
                           </Text>
+                          {/* <Text style={{ maxWidth: 200, fontSize: 10 }}>
+                            {prescriptionMedicine.medicine.pharmaceuticalForm}
+                          </Text> */}
                         </View>
                         <Text
                           style={[
@@ -175,7 +163,7 @@ const ViewPrescription = () => {
                     ))}
                 </View>
               )}
-              {!!prescription?.prescriptionMedicines.filter(
+              {!!values?.medicines.filter(
                 (prescriptionMedicine) =>
                   prescriptionMedicine.administrationForm === "Uso Externo"
               ).length && (
@@ -190,7 +178,7 @@ const ViewPrescription = () => {
                   >
                     USO EXTERNO
                   </Text>
-                  {prescription?.prescriptionMedicines
+                  {values?.medicines
                     .filter(
                       (prescriptionMedicine) =>
                         prescriptionMedicine.administrationForm ===
@@ -198,7 +186,7 @@ const ViewPrescription = () => {
                     )
                     .map((prescriptionMedicine, index) => (
                       <View
-                        key={prescriptionMedicine.medicine.name}
+                        key={prescriptionMedicine.medicineName}
                         style={{ marginLeft: 20, marginTop: 10 }}
                       >
                         <View
@@ -210,7 +198,7 @@ const ViewPrescription = () => {
                           }}
                         >
                           <Text style={{ maxWidth: 200, fontSize: 10 }}>
-                            {index + 1}) {prescriptionMedicine.medicine.name}{" "}
+                            {index + 1}) {prescriptionMedicine.medicineName}{" "}
                             {prescriptionMedicine.concentration}
                           </Text>
                           <View
@@ -221,7 +209,9 @@ const ViewPrescription = () => {
                             }}
                           />
                           <Text style={{ maxWidth: 200, fontSize: 10 }}>
-                            {prescriptionMedicine.medicine.pharmaceuticalForm}
+                            {previewData.medicines.find(
+                              (m) => m.id === prescriptionMedicine.medicineId
+                            )?.pharmaceuticalForm || ""}
                           </Text>
                         </View>
                         <Text
@@ -236,7 +226,7 @@ const ViewPrescription = () => {
                     ))}
                 </View>
               )}
-              {prescription?.aditionalInfos && (
+              {values?.aditionalInfos && (
                 <View style={{ marginTop: 20 }}>
                   <Text
                     style={{
@@ -247,12 +237,10 @@ const ViewPrescription = () => {
                   >
                     Informações Adicionais
                   </Text>
-                  <Text style={styles.text}>
-                    {prescription?.aditionalInfos}
-                  </Text>
+                  <Text style={styles.text}>{values?.aditionalInfos}</Text>
                 </View>
               )}
-              {prescription?.nonPharmacologicalTherapy && (
+              {values?.nonPharmacologicalTherapy && (
                 <View style={{ marginTop: 20 }}>
                   <Text
                     style={{
@@ -264,7 +252,7 @@ const ViewPrescription = () => {
                     Terapia não farmacológica
                   </Text>
                   <Text style={styles.text}>
-                    {prescription?.nonPharmacologicalTherapy}
+                    {values?.nonPharmacologicalTherapy}
                   </Text>
                 </View>
               )}
@@ -279,16 +267,16 @@ const ViewPrescription = () => {
                 <View style={{ display: "flex", alignItems: "center" }}>
                   <View style={{ borderTop: "1px solid #000", width: 150 }} />
                   <Text style={[styles.text, { margin: "5px 0" }]}>
-                    {prescription?.professional.name}
+                    {previewData?.professional?.name}
                   </Text>
                   <Text style={styles.text}>
-                    CRF/{prescription?.professional.crfState} -{" "}
-                    {prescription?.professional.crf}
+                    CRF/{previewData?.professional?.crfState} -{" "}
+                    {previewData?.professional?.crf}
                   </Text>
                   <Text style={[styles.text, { marginTop: 20 }]}>
-                    {prescription?.professional.city} -{" "}
-                    {prescription?.professional.state},{" "}
-                    {moment(prescription?.createdAt).format("DD/MM/YYYY")}
+                    {previewData?.professional?.city} -{" "}
+                    {previewData?.professional?.state},{" "}
+                    {moment().format("DD/MM/YYYY")}
                   </Text>
                 </View>
               </View>
@@ -324,4 +312,4 @@ const ViewPrescription = () => {
   );
 };
 
-export default ViewPrescription;
+export default PreviewPrescription;
