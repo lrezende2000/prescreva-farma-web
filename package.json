@@ -26,7 +26,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "npx serve -s -n -l 3000 start",
+    "start": "npx serve -s -l 3000 start",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
