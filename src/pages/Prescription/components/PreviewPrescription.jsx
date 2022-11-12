@@ -143,7 +143,7 @@ const PreviewPrescription = ({ values }) => {
                             }}
                           />
                           <Text style={{ maxWidth: 200, fontSize: 10 }}>
-                            {previewData.medicines.find(
+                            {previewData?.medicines.find(
                               (m) => m.id === prescriptionMedicine.medicineId
                             )?.pharmaceuticalForm || ""}
                           </Text>
@@ -209,7 +209,7 @@ const PreviewPrescription = ({ values }) => {
                             }}
                           />
                           <Text style={{ maxWidth: 200, fontSize: 10 }}>
-                            {previewData.medicines.find(
+                            {previewData?.medicines.find(
                               (m) => m.id === prescriptionMedicine.medicineId
                             )?.pharmaceuticalForm || ""}
                           </Text>
