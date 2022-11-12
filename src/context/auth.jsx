@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = async () => {
     await api.post("/logout", {}, { withCredentials: true });
     setUser(undefined);
-    window.location.href = "/entrar";
   };
 
   return (

@@ -44,6 +44,8 @@ const UserRoutes = () => {
           <Route path="encaminhamentos/ver/:id" element={<ViewForward />} />
           <Route path="farmacos" element={<MedicineList />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/inicio" />} />
       </Route>
     </Routes>
   );

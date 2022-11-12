@@ -40,7 +40,7 @@ const ProfessionalDetails = () => {
           <Chip
             sx={{ marginLeft: 2 }}
             label={values.logo.name}
-            onDelete={(e) => setFieldValue("logo", undefined)}
+            onDelete={() => setFieldValue("logo", undefined)}
           />
         )}
       </Grid>
@@ -50,7 +50,14 @@ const ProfessionalDetails = () => {
           placeholder="Informe seu CRF"
           name="crf"
           value={values.crf}
-          onChange={handleChange}
+          onChange={(e) => {
+            let value = e.target.value;
+            value = value.replace(/\D/, "");
+
+            if (value.length <= 4) {
+              setFieldValue("crf", value);
+            }
+          }}
           onFocus={handleFocus}
           error={touched.crf && !!errors.crf}
           helperText={touched.crf && errors.crf}
@@ -100,7 +107,7 @@ const ProfessionalDetails = () => {
           helperText={touched.email && errors.email}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      {/* <Grid item xs={12} md={6}>
         <TextField
           label="Senha"
           placeholder="Informe sua senha"
@@ -127,7 +134,7 @@ const ProfessionalDetails = () => {
             touched.passwordConfirmation && errors.passwordConfirmation
           }
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

@@ -15,13 +15,14 @@ export const StyledTableRow = styled(TableRow)`
 export const DateDataContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 export const DateContainer = styled.div`
   text-align: center;
   width: 100%;
-  color: ${({ theme }) => theme.colors.black};
-  background: ${({ theme }) => theme.colors.quartiary_blue};
+  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.primary_blue};
   font-size: 0.875rem;
   font-weight: 700;
   padding: 0.2rem 0;
@@ -29,8 +30,13 @@ export const DateContainer = styled.div`
 
 export const DateApointmentContainer = styled.div`
   display: flex;
+  padding: 4px 0;
   flex-direction: column;
   height: 100%;
+  background: ${({ theme, hasAppointment }) =>
+    hasAppointment ? theme.colors.quartiary_blue : "transparent"};
+  width: 100%;
+  overflow-y: scroll;
 `;
 
 export const CalendarContainer = styled.div`
@@ -61,10 +67,7 @@ export const CalenderWeekContainer = styled.div`
 `;
 
 export const CalenderWeekDayContainer = styled.div`
-  /* margin: 1px; */
-  /* border: 1px solid gray; */
   text-align: center;
-  /* height: 25px; */
   color: ${({ theme }) => theme.colors.white};
   padding: 0.5rem 0;
 
@@ -87,11 +90,6 @@ export const CalenderDateDayContainerActive = styled.div`
   border-radius: 4px;
   text-align: center;
   height: 100px;
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
 `;
 
 export const ModalHeader = styled.div`
@@ -150,9 +148,7 @@ export const AppointmentContainer = styled.div`
   width: 100%;
   color: ${({ theme }) => theme.colors.black};
   font-size: 0.875rem;
-  /* background: rgba(0, 0, 0, 0.1); */
-  /* height: 25px; */
-  margin-bottom: 3px;
+  padding: 8px 0;
 
   cursor: pointer;
 

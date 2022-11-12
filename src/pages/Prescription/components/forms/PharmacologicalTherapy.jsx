@@ -9,6 +9,7 @@ import {
   FormControl,
   FormHelperText,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -18,8 +19,13 @@ import {
 
 import Text from "../../../../components/Text";
 import MedicineAutocomplete from "../../../../components/MedicineAutocomplete";
+import { Search } from "@mui/icons-material";
+import MedicinesSearch from "../MedicinesSearch";
+import { useState } from "react";
 
 const PharmacologicalTherapy = () => {
+  const [openSearchMedicines, setOpenSearchMedicines] = useState(false);
+
   const { values, setFieldValue, setFieldTouched, errors, touched } =
     useFormikContext();
 
@@ -81,7 +87,12 @@ const PharmacologicalTherapy = () => {
     <Grid container item>
       <Grid item xs={12}>
         <Box display="flex" flexDirection="column" gap={1}>
-          <Text fontWeight={700}>Fármacos prescritos</Text>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Text fontWeight={700}>Fármacos prescritos</Text>
+            <IconButton onClick={() => setOpenSearchMedicines(true)}>
+              <Search color="primary" />
+            </IconButton>
+          </Box>
           <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
             {!values.medicines.length && (
               <Text variant="small" fontStyle="italic">
@@ -111,8 +122,9 @@ const PharmacologicalTherapy = () => {
         onSubmit={handleAddMedicine}
       >
         {(posologyFormik) => {
-          const hasError =
-            Object.values(posologyFormik.values).some((value) => !value);
+          const hasError = Object.values(posologyFormik.values).some(
+            (value) => !value
+          );
 
           return (
             <>
@@ -259,6 +271,10 @@ const PharmacologicalTherapy = () => {
           helperText={touched.aditionalInfos && errors.aditionalInfos}
         />
       </Grid>
+      <MedicinesSearch
+        open={openSearchMedicines}
+        onClose={() => setOpenSearchMedicines(false)}
+      />
     </Grid>
   );
 };

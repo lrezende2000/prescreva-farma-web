@@ -265,7 +265,9 @@ const AppointmentList = () => {
                 <CalenderDateDayContainerActive key={i}>
                   <DateDataContainer>
                     <DateContainer>{i - startIndex + 1}</DateContainer>
-                    <DateApointmentContainer>
+                    <DateApointmentContainer
+                      hasAppointment={dayKey in calendar}
+                    >
                       {dayKey in calendar &&
                         calendar[dayKey].map((appointment) => (
                           <AppointmentContainer
@@ -293,7 +295,7 @@ const AppointmentList = () => {
         open={open}
         onClose={() => setAnchorEl(null)}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
-        anchorOrigin={{ horizontal: "center", vertical: "top" }}
+        anchorOrigin={{ horizontal: "center", vertical: "center" }}
       >
         <MenuItem onClick={() => setOpenDelete(true)}>
           <Text color="error">Deletar</Text>

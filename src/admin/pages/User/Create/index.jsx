@@ -123,21 +123,21 @@ const NewAccount = () => {
     crf: yup
       .string()
       .required("CRF é obrigatório")
-      .matches(/^\d{4}/, "O CRF só deve conter números. Ex: 1234"),
+      .matches(/^\d{4}$/, "O CRF só deve conter números. Ex: 1234"),
     crfState: yup.string().required("Estado do CRF é obrigatório"),
     email: yup
       .string()
       .required("Email é obrigatório")
       .email("Email incorreto"),
-    password: yup
-      .string()
-      .required("Senha é obrigatória")
-      .min(6, "Senha deve ter no mínimo 6 caracteres")
-      .max(20, "Senha deve ter no máximo 20 caracteres"),
-    passwordConfirmation: yup
-      .string()
-      .required("Confirmação de senha é obrigatória")
-      .oneOf([yup.ref("password"), null], "Senhas não conferem"),
+    // password: yup
+    //   .string()
+    //   .required("Senha é obrigatória")
+    //   .min(6, "Senha deve ter no mínimo 6 caracteres")
+    //   .max(20, "Senha deve ter no máximo 20 caracteres"),
+    // passwordConfirmation: yup
+    //   .string()
+    //   .required("Confirmação de senha é obrigatória")
+    //   .oneOf([yup.ref("password"), null], "Senhas não conferem"),
     street: yup.string().required("Rua é obrigatória"),
     cep: yup
       .string()
