@@ -1,6 +1,28 @@
 import styled from "styled-components";
 import { TableRow } from "@mui/material";
 
+// const upDown = `
+//   0% {
+//     transform: translateY(0px);
+//   }
+
+//   25% {
+//     transform: translateY(-10px);
+//   }
+
+//   50% {
+//     transform: translateY(0px);
+//   }
+
+//   75% {
+//     transform: translateY(-10px);
+//   }
+
+//   100% {
+//     transform: translateY(0px);
+//   }
+// `;
+
 export const StyledTableHead = styled(TableRow)`
   background-color: ${({ theme }) => theme.colors.tertiary_blue};
 `;
@@ -16,6 +38,7 @@ export const DateDataContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
 `;
 
 export const DateContainer = styled.div`
@@ -37,6 +60,18 @@ export const DateApointmentContainer = styled.div`
     hasAppointment ? theme.colors.quartiary_blue : "transparent"};
   width: 100%;
   overflow-y: scroll;
+  /* position: relative; */
+
+  &.date_apointment_container:not(.show_more) {
+    .show_more_icon {
+      display: none;
+    }
+  }
+
+  .show_more_icon {
+    /* animation:  1s;
+    animation-delay: 2s; */
+  }
 `;
 
 export const CalendarContainer = styled.div`

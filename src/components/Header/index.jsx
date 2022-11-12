@@ -157,16 +157,14 @@ const LoggedHeader = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         {!user?.isAdmin && (
-          <>
-            <MenuItem onClick={() => navigate("/minha-conta")}>
-              <ListItemIcon>
-                <Person fontSize="small" />
-              </ListItemIcon>
-              Minha conta
-            </MenuItem>
-            <Divider />
-          </>
+          <MenuItem onClick={() => navigate("/minha-conta")}>
+            <ListItemIcon>
+              <Person fontSize="small" />
+            </ListItemIcon>
+            Minha conta
+          </MenuItem>
         )}
+        <Divider />
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" color="error" />

@@ -1,6 +1,11 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState, useLayoutEffect } from "react";
 import moment from "moment";
-import { Add, FilterList, Search } from "@mui/icons-material";
+import {
+  Add,
+  FilterList,
+  KeyboardArrowDown,
+  Search,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import _ from "lodash";
 import {
@@ -13,6 +18,8 @@ import {
   Menu,
   MenuItem,
   Select,
+  SpeedDial,
+  SpeedDialIcon,
   TextField,
 } from "@mui/material";
 
@@ -38,6 +45,7 @@ import { formatUrlQuery } from "../../../helpers/formatter";
 import PatientAutocomplete from "../../../components/PatientAutocomplete";
 import DeleteDialog from "../../../components/DeleteDialog";
 import Text from "../../../components/Text";
+import { theme } from "../../../global/theme";
 
 export const weekArray = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -140,6 +148,22 @@ const AppointmentList = () => {
   useEffect(() => {
     fetchRows();
   }, [filters.year, filters.month]);
+
+  useLayoutEffect(() => {
+    const dateAppointmentContainers = document.getElementsByClassName(
+      "date_apointment_container"
+    );
+
+    [...dateAppointmentContainers].forEach((dateAppointmentContainer, i) => {
+      const hasVerticalScrollbar =
+        dateAppointmentContainer.scrollHeight >
+        dateAppointmentContainer.clientHeight;
+
+      if (hasVerticalScrollbar) {
+        dateAppointmentContainer.classList.add("show_more");
+      }
+    });
+  }, [calendar]);
 
   return (
     <PageLayout>
@@ -267,6 +291,7 @@ const AppointmentList = () => {
                     <DateContainer>{i - startIndex + 1}</DateContainer>
                     <DateApointmentContainer
                       hasAppointment={dayKey in calendar}
+                      className="date_apointment_container"
                     >
                       {dayKey in calendar &&
                         calendar[dayKey].map((appointment) => (
@@ -280,7 +305,28 @@ const AppointmentList = () => {
                             {moment.utc(appointment.end).format("HH:mm")}
                           </AppointmentContainer>
                         ))}
+                      <SpeedDial
+                        open={false}
+                        className="show_more_icon"
+                        ariaLabel="Speed Dial show more"
+                        sx={{ position: "absolute", bottom: 0, right: 20 }}
+                        FabProps={{
+                          sx: {
+                            width: 0,
+                            height: 0,
+                            background: "transparent",
+                            boxShadow: "none",
+                            ":hover": { background: "transparent" },
+                            color: theme.colors.black,
+                          },
+                        }}
+                        icon={<KeyboardArrowDown />}
+                      />
                     </DateApointmentContainer>
+                    {/* <KeyboardArrowDown
+                      className="show_more_icon"
+                      sx={{ position: "absolute", right: 10, bottom: 10 }}
+                    /> */}
                   </DateDataContainer>
                 </CalenderDateDayContainerActive>
               ) : (
