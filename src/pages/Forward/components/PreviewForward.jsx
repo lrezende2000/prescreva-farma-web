@@ -61,104 +61,126 @@ const PreviewForward = ({ values }) => {
       <Document>
         <Page size="A4" style={styles.page}>
           <View style={{ position: "relative", zIndex: 999 }}>
-            <View style={styles.header}>
-              {previewData?.professional?.logo && (
-                <Image
-                  style={{ maxWidth: "200px", maxHeight: "100px" }}
-                  src={`${process.env.REACT_APP_API_URL}/public/logos/${previewData?.professional?.logo}`}
-                  alt="Logo marca do profissional"
-                />
-              )}
-              <View style={styles.column}>
-                <Text style={styles.text}>
-                  {previewData?.professional.street},{" "}
-                  {previewData?.professional.number} -{" "}
-                  {previewData?.professional.district},{" "}
-                  {previewData?.professional.city} -{" "}
-                  {previewData?.professional.state}
-                </Text>
-                {previewData?.professional.professionalPhone && (
-                  <Text style={styles.text}>
-                    {previewData?.professional.professionalPhone.length === 10
-                      ? maskTel(previewData?.professional.professionalPhone)
-                      : maskPhone(previewData?.professional.professionalPhone)}
-                  </Text>
-                )}
-              </View>
-            </View>
-
             <View
-              style={{ margin: "50px auto 0", maxWidth: 500, width: "100%" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
+              }}
             >
               <View>
-                <Text style={styles.text}>
-                  {previewData?.patient.name} -{" "}
-                  {maskPhone(previewData?.patient.phone)}
-                </Text>
-              </View>
+                <View style={styles.header}>
+                  {previewData?.professional?.logo && (
+                    <Image
+                      style={{ maxWidth: "200px", maxHeight: "100px" }}
+                      src={`${process.env.REACT_APP_API_URL}/public/logos/${previewData?.professional?.logo}`}
+                      alt="Logo marca do profissional"
+                    />
+                  )}
+                  <View style={styles.column}>
+                    <Text style={styles.text}>
+                      {previewData?.professional.street},{" "}
+                      {previewData?.professional.number} -{" "}
+                      {previewData?.professional.district},{" "}
+                      {previewData?.professional.city} -{" "}
+                      {previewData?.professional.state}
+                    </Text>
+                    {previewData?.professional.professionalPhone && (
+                      <Text style={styles.text}>
+                        {previewData?.professional.professionalPhone.length ===
+                        10
+                          ? maskTel(previewData?.professional.professionalPhone)
+                          : maskPhone(
+                              previewData?.professional.professionalPhone
+                            )}
+                      </Text>
+                    )}
+                  </View>
+                </View>
 
-              <View style={{ marginTop: 20 }}>
-                <Text
+                <View
                   style={{
-                    textAlign: "center",
-                    fontSize: 12,
-                    fontWeight: "bold",
+                    margin: "50px auto 0",
+                    maxWidth: 500,
+                    width: "100%",
                   }}
                 >
-                  ENCAMINHAMENTO
-                </Text>
-                <Text style={[styles.text, { marginTop: 20 }]}>
-                  Ao {values?.medicalExperience}
-                </Text>
-                <Text style={[styles.text, { marginTop: 20 }]}>
-                  Prezado Dr(a).:
-                </Text>
-                <Text style={[styles.text, { marginTop: 20 }]}>
-                  {values?.forwardReason}
-                </Text>
-                <Text style={[styles.text, { marginTop: 20 }]}>
-                  {values?.showFooter &&
-                    "À disposição para qualquer esclarecimento."}
-                </Text>
-                <Text style={[styles.text, { marginTop: 20 }]}>
-                  Atenciosamente,
-                </Text>
-              </View>
+                  <View>
+                    <Text style={styles.text}>
+                      {previewData?.patient.name} -{" "}
+                      {maskPhone(previewData?.patient.phone)}
+                    </Text>
+                  </View>
 
-              <View
-                style={{
-                  marginTop: 75,
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <View style={{ display: "flex", alignItems: "center" }}>
-                  <View style={{ borderTop: "1px solid #000", width: 150 }} />
-                  <Text style={[styles.text, { margin: "5px 0" }]}>
-                    {previewData?.professional.name}
-                  </Text>
-                  <Text style={styles.text}>
-                    CRF/{previewData?.professional.crfState} -{" "}
-                    {previewData?.professional.crf}
-                  </Text>
-                  <Text style={[styles.text, { marginTop: 20 }]}>
-                    {previewData?.professional.city} -{" "}
-                    {previewData?.professional.state},{" "}
-                    {moment().format("DD/MM/YYYY")}
-                  </Text>
+                  <View style={{ marginTop: 20 }}>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontSize: 12,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      ENCAMINHAMENTO
+                    </Text>
+                    <Text style={[styles.text, { marginTop: 20 }]}>
+                      Ao {values?.medicalExperience}
+                    </Text>
+                    <Text style={[styles.text, { marginTop: 20 }]}>
+                      Prezado Dr(a).:
+                    </Text>
+                    <Text style={[styles.text, { marginTop: 20 }]}>
+                      {values?.forwardReason}
+                    </Text>
+                    <Text style={[styles.text, { marginTop: 20 }]}>
+                      {values?.showFooter &&
+                        "À disposição para qualquer esclarecimento."}
+                    </Text>
+                    <Text style={[styles.text, { marginTop: 20 }]}>
+                      Atenciosamente,
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      marginTop: 75,
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <View style={{ display: "flex", alignItems: "center" }}>
+                      <View
+                        style={{ borderTop: "1px solid #000", width: 150 }}
+                      />
+                      <Text style={[styles.text, { margin: "5px 0" }]}>
+                        {previewData?.professional.name}
+                      </Text>
+                      <Text style={styles.text}>
+                        CRF/{previewData?.professional.crfState} -{" "}
+                        {previewData?.professional.crf}
+                      </Text>
+                      <Text style={[styles.text, { marginTop: 20 }]}>
+                        {previewData?.professional.city} -{" "}
+                        {previewData?.professional.state},{" "}
+                        {moment().format("DD/MM/YYYY")}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-              <Text style={[styles.text, { marginTop: 50 }]}>
-                Serviço realizado em conformidade de Lei 13.021/14. Este
-                procedimento não tem finalidade de diagnóstico e não substitui
-                consulta médica ou realização de exames laboratoriais. Conforme
-                Art. 69 do RDC 44/2009 da Anvisa. Seus dados pessoais são
-                tratados para a estrita execução dos serviços de saúde
-                realizados e em conformidade com a Lei n 13.709/2018, podendo
-                este documento ser armazenado pelo tempo necessário para
-                cumprimento das obrigações legais e/ou regulatórias aplicáveis.
-              </Text>
+              <View style={{ maxWidth: 500, margin: "0 auto" }}>
+                <Text style={[styles.text, { margin: "50px 0" }]}>
+                  Serviço realizado em conformidade de Lei 13.021/14. Este
+                  procedimento não tem finalidade de diagnóstico e não substitui
+                  consulta médica ou realização de exames laboratoriais.
+                  Conforme Art. 69 do RDC 44/2009 da Anvisa. Seus dados pessoais
+                  são tratados para a estrita execução dos serviços de saúde
+                  realizados e em conformidade com a Lei n° 13.709/2018, podendo
+                  este documento ser armazenado pelo tempo necessário para
+                  cumprimento das obrigações legais e/ou regulatórias aplicáveis
+                </Text>
+              </View>
             </View>
           </View>
           <View
