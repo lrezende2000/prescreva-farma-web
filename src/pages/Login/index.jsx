@@ -48,7 +48,6 @@ const Login = () => {
       toast.success(data.message);
       navigate(location.state?.from?.pathname || "/inicio", { replace: true });
     } catch (err) {
-      console.log(err)
       toast.error(err.response.data.message);
     } finally {
       setLoading(false);
