@@ -30,6 +30,7 @@ import DeleteDialog from "../../../components/DeleteDialog";
 import AvaliationModal from "../../../components/AvaliationModal";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
+import { toast } from "react-toastify";
 
 const PrescriptionList = () => {
   const location = useLocation();
@@ -73,6 +74,10 @@ const PrescriptionList = () => {
 
       setRows(data.rows);
       setTotalRows(data.totalRows);
+
+      if (data.totalRows === 0) {
+        toast.warn("Não foi encontrado nenhum registro");
+      }
     } catch (err) {
       setRows([]);
       setTotalRows(0);

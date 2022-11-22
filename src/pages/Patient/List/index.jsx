@@ -32,6 +32,7 @@ import Text from "../../../components/Text";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
 import DeleteDialog from "../../../components/DeleteDialog";
+import { toast } from "react-toastify";
 
 const PatientList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -66,6 +67,10 @@ const PatientList = () => {
 
       setRows(data.rows);
       setTotalRows(data.totalRows);
+
+      if (data.totalRows === 0) {
+        toast.warn("Não foi encontrado nenhum registro");
+      }
     } catch (err) {
       setRows([]);
       setTotalRows(0);
@@ -76,13 +81,16 @@ const PatientList = () => {
 
   const handleDeletePatient = async () => {
     try {
-      await api.delete(`/patient/${anchorEl?.id}`);
+      const { data } = await api.delete(`/patient/${anchorEl?.id}`);
 
       setOpenDelete(false);
       setAnchorEl(null);
 
+      toast.success(data.message);
       fetchRows();
-    } catch {}
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   useEffect(() => {
@@ -223,10 +231,18 @@ const PatientList = () => {
           <MenuItem onClick={() => navigate(`editar/${anchorEl?.id}`)}>
             <Text>Editar</Text>
           </MenuItem>
-          <MenuItem onClick={() => navigate(`/prescricao/novo/?patientId=${anchorEl?.id}`)}>
+          <MenuItem
+            onClick={() =>
+              navigate(`/prescricao/novo/?patientId=${anchorEl?.id}`)
+            }
+          >
             <Text>Realizar prescrição</Text>
           </MenuItem>
-          <MenuItem onClick={() => navigate(`/encaminhamentos/novo/?patientId=${anchorEl?.id}`)}>
+          <MenuItem
+            onClick={() =>
+              navigate(`/encaminhamentos/novo/?patientId=${anchorEl?.id}`)
+            }
+          >
             <Text>Realizar encaminhamento</Text>
           </MenuItem>
           <MenuItem onClick={() => setOpenDelete(true)}>

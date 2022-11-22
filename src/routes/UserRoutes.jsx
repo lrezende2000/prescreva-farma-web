@@ -19,14 +19,26 @@ import ViewPrescription from "../pages/Prescription/View";
 import ViewForward from "../pages/Forward/View";
 import Profile from "../pages/User/Profile";
 import ResetPassword from "../pages/ResetPassword";
+import useAuth from "../hooks/useAuth";
 
 const UserRoutes = () => {
+  const { user } = useAuth();
+
   return (
     <Routes>
       <Route element={<PersistLogin />}>
-        <Route path="entrar" element={<Login />} />
-        <Route path="resetar-senha" element={<ResetPassword />} />
-        <Route path="esqueci-senha" element={<ForgotPassword />} />
+        <Route
+          path="entrar"
+          element={user ? <Navigate to="/inicio" /> : <Login />}
+        />
+        <Route
+          path="resetar-senha"
+          element={user ? <Navigate to="/inicio" /> : <ResetPassword />}
+        />
+        <Route
+          path="esqueci-senha"
+          element={user ? <Navigate to="/inicio" /> : <ForgotPassword />}
+        />
         <Route element={<RequireAuth />}>
           <Route index element={<Navigate to="/inicio" />} />
           <Route path="inicio" element={<Home />} />

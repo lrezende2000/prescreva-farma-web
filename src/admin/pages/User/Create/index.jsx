@@ -27,6 +27,7 @@ import {
   FormContainer,
   FormWrapper,
 } from "./styles";
+import moment from "moment";
 
 const steps = [
   {
@@ -91,7 +92,14 @@ const NewAccount = () => {
     birthDate: yup
       .date()
       .typeError("Data no formato errado")
-      .required("Data de nascimento é obrigatória"),
+      .required("Data de nascimento é obrigatória")
+      .test("is-legal-age", "Usuário precisa ter mais de 18 anos", (value) => {
+        if (moment().diff(moment(value), "years") < 18) {
+          return false;
+        }
+
+        return true;
+      }),
     cpf: yup
       .string()
       .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF no formato errado")

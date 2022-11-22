@@ -46,6 +46,7 @@ import PatientAutocomplete from "../../../components/PatientAutocomplete";
 import DeleteDialog from "../../../components/DeleteDialog";
 import Text from "../../../components/Text";
 import { theme } from "../../../global/theme";
+import { toast } from "react-toastify";
 
 export const weekArray = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -115,6 +116,10 @@ const AppointmentList = () => {
       const { data } = await api.get(url);
 
       setCalendar(data.rowsGrouped);
+
+      if (data.rows.length === 0) {
+        toast.warn("Não foi encontrado nenhum registro");
+      }
     } catch (err) {
       setCalendar({});
     } finally {

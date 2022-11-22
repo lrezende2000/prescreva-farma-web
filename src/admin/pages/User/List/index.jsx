@@ -4,7 +4,10 @@ import {
   Box,
   Button,
   Grid,
+  IconButton,
   InputAdornment,
+  Menu,
+  MenuItem,
   Pagination,
   Paper,
   Table,
@@ -14,7 +17,7 @@ import {
   TableHead,
   TextField,
 } from "@mui/material";
-import { Add, FilterList, Search } from "@mui/icons-material";
+import { Add, FilterList, MoreVert, Search } from "@mui/icons-material";
 
 import useAxios from "../../../../hooks/useAxios";
 import { formatUrlQuery } from "../../../../helpers/formatter";
@@ -23,6 +26,7 @@ import PageLayout from "../../../../components/PageLayout";
 import Text from "../../../../components/Text";
 
 import { StyledTableHead, StyledTableRow } from "./styles";
+import DeleteDialog from "../../../../components/DeleteDialog";
 
 const UserList = () => {
   const [rows, setRows] = useState([]);
@@ -33,6 +37,10 @@ const UserList = () => {
     email: "",
   });
   const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const open = !!anchorEl;
 
   const pageCount = useMemo(() => Math.ceil(totalRows / 15), [totalRows]);
 
@@ -60,6 +68,17 @@ const UserList = () => {
       setLoading(false);
     }
   }, [page, filters]);
+
+  const handleDeleteUser = async () => {
+    try {
+      await api.delete(`/user/${anchorEl?.id}`);
+
+      setOpenDelete(false);
+      setAnchorEl(null);
+
+      fetchRows();
+    } catch {}
+  };
 
   useEffect(() => {
     fetchRows();
@@ -149,6 +168,7 @@ const UserList = () => {
                 <StyledTableHead>
                   <TableCell>Nome</TableCell>
                   <TableCell>Email</TableCell>
+                  <TableCell align="right">Ações</TableCell>
                 </StyledTableHead>
               </TableHead>
               <TableBody>
@@ -156,6 +176,14 @@ const UserList = () => {
                   <StyledTableRow key={row.id}>
                     <TableCell component="td">{row.name}</TableCell>
                     <TableCell component="td">{row.email}</TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        id={row.id}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                      >
+                        <MoreVert color="primary" />
+                      </IconButton>
+                    </TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -171,6 +199,23 @@ const UserList = () => {
           onChange={(_, value) => setPage(value)}
         />
       </Box>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <MenuItem onClick={() => setOpenDelete(true)}>
+          <Text color="error">Deletar</Text>
+        </MenuItem>
+      </Menu>
+      <DeleteDialog
+        title="Tem certeza que deseja remover o farmacêutico e todos seus registros?"
+        onClose={() => setOpenDelete(false)}
+        open={openDelete}
+        onConfirmDelete={handleDeleteUser}
+      />
     </PageLayout>
   );
 };

@@ -30,6 +30,7 @@ import moment from "moment";
 import DeleteDialog from "../../../components/DeleteDialog";
 import PatientAutocomplete from "../../../components/PatientAutocomplete";
 import AvaliationModal from "../../../components/AvaliationModal";
+import { toast } from "react-toastify";
 
 const ForwardList = () => {
   const location = useLocation();
@@ -72,6 +73,10 @@ const ForwardList = () => {
 
       setRows(data.rows);
       setTotalRows(data.totalRows);
+
+      if (data.totalRows === 0) {
+        toast.warn("Não foi encontrado nenhum registro");
+      }
     } catch (err) {
       setRows([]);
       setTotalRows(0);

@@ -48,7 +48,8 @@ const PatientForm = ({ handleToggleSubmit, initialValues }) => {
     birthDate: yup
       .date()
       .typeError("Data no formato errado")
-      .required("Data de nascimento é obrigatória"),
+      .required("Data de nascimento é obrigatória")
+      .max(new Date(), "Data de nascimento deve ser anterior ao dia atual"),
     gender: yup
       .mixed()
       .oneOf(["WOMAN", "MEN", "OTHER"], "Gênero errado")
@@ -66,13 +67,13 @@ const PatientForm = ({ handleToggleSubmit, initialValues }) => {
       .required("Celular é obrigatório"),
     cpf: yup
       .string()
+      .required("CPF é obrigatório")
       .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF no formato errado")
       .test({
         name: "is-valid-cpf",
         message: "CPF inválido",
         test: (value) => validateCpf(value),
-      })
-      .required("CPF é obrigatório"),
+      }),
   });
 
   const handleChange = (e, setter) => {
