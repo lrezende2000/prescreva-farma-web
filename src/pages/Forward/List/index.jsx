@@ -35,6 +35,8 @@ import { toast } from "react-toastify";
 const ForwardList = () => {
   const location = useLocation();
 
+  const lastAvaliation = localStorage.getItem("@prescreva:lastAvaliation");
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [filters, setFilters] = useState({
     patientId: undefined,
@@ -43,11 +45,16 @@ const ForwardList = () => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openAvaliation, setOpenAvaliation] = useState(
-    location?.state?.openAvaliation || false
+    (location?.state?.openAvaliation && !lastAvaliation) ||
+      (location?.state?.openAvaliation &&
+        moment().diff(moment(lastAvaliation), "days") > 2) ||
+      false
   );
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+
+  console.log(moment().diff(moment('2022-11-28'), "days"))
 
   const navigate = useNavigate();
 

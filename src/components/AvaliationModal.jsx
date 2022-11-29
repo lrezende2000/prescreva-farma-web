@@ -9,6 +9,7 @@ import useAxios from "../hooks/useAxios";
 
 import Text from "./Text";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const AvaliationModal = ({ open, onClose }) => {
   const api = useAxios();
@@ -27,6 +28,10 @@ const AvaliationModal = ({ open, onClose }) => {
       const { data } = await api.post("/avaliation/", formatBody(values));
 
       toast.success(data.message);
+      localStorage.setItem(
+        "@prescreva:lastAvaliation",
+        moment().format("YYYY-MM-DD")
+      );
       onClose();
     } catch (err) {
       toast.error(err.response.data.message);

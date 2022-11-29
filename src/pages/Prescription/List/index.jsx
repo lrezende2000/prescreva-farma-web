@@ -35,6 +35,8 @@ import { toast } from "react-toastify";
 const PrescriptionList = () => {
   const location = useLocation();
 
+  const lastAvaliation = localStorage.getItem("@prescreva:lastAvaliation");
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [filters, setFilters] = useState({
     medicines: [],
@@ -43,7 +45,10 @@ const PrescriptionList = () => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openAvaliation, setOpenAvaliation] = useState(
-    location?.state?.openAvaliation || false
+    (location?.state?.openAvaliation && !lastAvaliation) ||
+      (location?.state?.openAvaliation &&
+        moment(lastAvaliation).diff(moment(), "days") > 1) ||
+      false
   );
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(1);
